@@ -1,6 +1,13 @@
 
+```bash
+make && make test
 
+make shaders
+# make clean_shaders
 ```
+
+
+```bash
 sudo dnf install vulkan-tools \
      glfw-devel \
      glm-devel \
@@ -11,7 +18,7 @@ sudo dnf install vulkan-tools \
 
 
 [Vulkan SDK](https://vulkan.lunarg.com/)
-```
+```bash
 export VULKAN_SDK=/home/ryan/Downloads/vulkansdk/1.3.268.0
 source $VULKAN_SDK"/setup-env.sh"
 ```
