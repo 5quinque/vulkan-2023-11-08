@@ -2,10 +2,12 @@
 #include <GLFW/glfw3.h>
 
 #include <algorithm> // Necessary for std::clamp
+#include <array>  // Necessary for std::array
 #include <cstdint> // Necessary for uint32_t
 #include <cstdlib>
 #include <cstring>
 #include <fstream> // Necessary for std::ifstream
+#include <glm/glm.hpp>  // Necessary for glm::vec3
 #include <iostream>
 #include <limits> // Necessary for std::numeric_limits
 #include <map>
@@ -13,7 +15,6 @@
 #include <set>
 #include <stdexcept>
 #include <vector>
-
 
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
@@ -27,6 +28,56 @@ const std::vector<const char*> validationLayers = {
 const std::vector<const char*> deviceExtensions = {
     VK_KHR_SWAPCHAIN_EXTENSION_NAME
 };
+
+struct Vertex {
+    glm::vec2 pos;
+    glm::vec3 color;
+
+    static VkVertexInputBindingDescription getBindingDescription() {
+        VkVertexInputBindingDescription bindingDescription{};
+        bindingDescription.binding = 0;
+        bindingDescription.stride = sizeof(Vertex);
+        bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+        return bindingDescription;
+    }
+
+    static std::array<VkVertexInputAttributeDescription, 2> getAttributeDescriptions() {
+        std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
+
+        // This functions decribes the memory layout and shader attribute locations
+        // See shaders/shaders.vert for the shader code
+        // Look how the shader inputs correspond to the vertex attribute descriptions
+
+
+        attributeDescriptions[0].binding = 0;  // index of the binding in the array of bindings
+        attributeDescriptions[0].location = 0;  // location of the attribute in the vertex shader
+        // shader type : format
+        // float: VK_FORMAT_R32_SFLOAT
+        // vec2: VK_FORMAT_R32G32_SFLOAT
+        // vec3: VK_FORMAT_R32G32B32_SFLOAT
+        // vec4: VK_FORMAT_R32G32B32A32_SFLOAT
+        // ivec2: VK_FORMAT_R32G32_SINT, a 2-component vector of 32-bit signed integers
+        // uvec4: VK_FORMAT_R32G32B32A32_UINT, a 4-component vector of 32-bit unsigned integers
+        // double: VK_FORMAT_R64_SFLOAT, a double-precision (64-bit) float
+        attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;  // format of the data
+        attributeDescriptions[0].offset = offsetof(Vertex, pos); // offset of the attribute in the vertex structure
+
+        attributeDescriptions[1].binding = 0;
+        attributeDescriptions[1].location = 1;
+        attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+        attributeDescriptions[1].offset = offsetof(Vertex, color);
+
+        return attributeDescriptions;
+    }
+};
+
+const std::vector<Vertex> vertices = {
+    {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+    {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+    {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+};
+
 
 #ifdef NDEBUG
     const bool enableValidationLayers = false;
@@ -346,10 +397,14 @@ private:
 
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-        vertexInputInfo.vertexBindingDescriptionCount = 0;
-        vertexInputInfo.pVertexBindingDescriptions = nullptr; // Optional
-        vertexInputInfo.vertexAttributeDescriptionCount = 0;
-        vertexInputInfo.pVertexAttributeDescriptions = nullptr; // Optional
+
+        auto bindingDescription = Vertex::getBindingDescription();
+        auto attributeDescriptions = Vertex::getAttributeDescriptions();
+
+        vertexInputInfo.vertexBindingDescriptionCount = 1;
+        vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+        vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+        vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
         VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
         inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
