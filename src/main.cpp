@@ -4,7 +4,6 @@
 
 #include "application.hpp"
 
-
 int main() {
     HelloTriangleApplication app;
 

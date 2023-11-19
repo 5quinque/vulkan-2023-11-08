@@ -1,6 +1,5 @@
 #include "application.hpp"
 
-
 void HelloTriangleApplication::run() {
     window.initWindow();
     vulkanSetup.initVulkan();

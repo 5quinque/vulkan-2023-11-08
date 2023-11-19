@@ -1,33 +1,28 @@
 #include <algorithm> // Necessary for std::clamp
 #include <cstring>
-#include <map>
 #include <fstream> // Necessary for std::ifstream
-#include <optional>
-#include <limits> // Necessary for std::numeric_limits
-#include <set>
 #include <iostream>
-
+#include <limits> // Necessary for std::numeric_limits
+#include <map>
+#include <optional>
+#include <set>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-#include "Window.hpp"
 #include "Vertex.hpp"
-
+#include "Window.hpp"
 
 #ifdef NDEBUG
-    const bool enableValidationLayers = false;
+const bool enableValidationLayers = false;
 #else
-    const bool enableValidationLayers = true;
+const bool enableValidationLayers = true;
 #endif
-
 
 const int MAX_FRAMES_IN_FLIGHT = 2;
 
-
 const std::vector<const char*> validationLayers = {
-    "VK_LAYER_KHRONOS_validation"
-};
+    "VK_LAYER_KHRONOS_validation"};
 
 struct QueueFamilyIndices {
     std::optional<uint32_t> graphicsFamily;
@@ -45,24 +40,29 @@ struct SwapChainSupportDetails {
 };
 
 const std::vector<const char*> deviceExtensions = {
-    VK_KHR_SWAPCHAIN_EXTENSION_NAME
-};
+    VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 
-
-VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
-void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);
+VkResult CreateDebugUtilsMessengerEXT(
+    VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkDebugUtilsMessengerEXT* pDebugMessenger);
+void DestroyDebugUtilsMessengerEXT(VkInstance instance,
+                                   VkDebugUtilsMessengerEXT debugMessenger,
+                                   const VkAllocationCallbacks* pAllocator);
 
 class VulkanSetup {
     Window& window;
-public:
+
+  public:
     VkDevice device;
 
-    VulkanSetup(Window& window): window(window) {}
+    VulkanSetup(Window& window) : window(window) {}
 
     void initVulkan();
     void drawFrame();
     void cleanup();
-private:
+
+  private:
     VkInstance instance;
     VkDebugUtilsMessengerEXT debugMessenger;
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
@@ -96,16 +96,16 @@ private:
 
     uint32_t currentFrame = 0;
 
-
     void createInstance();
     bool checkValidationLayerSupport();
     std::vector<const char*> getRequiredExtensions();
-    void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
-    static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
-        VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-        VkDebugUtilsMessageTypeFlagsEXT messageType,
-        const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-        void* pUserData);
+    void populateDebugMessengerCreateInfo(
+        VkDebugUtilsMessengerCreateInfoEXT& createInfo);
+    static VKAPI_ATTR VkBool32 VKAPI_CALL
+    debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                  VkDebugUtilsMessageTypeFlagsEXT messageType,
+                  const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+                  void* pUserData);
     void setupDebugMessenger();
     void createSurface();
     void pickPhysicalDevice();
@@ -116,18 +116,22 @@ private:
     SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
     void createLogicalDevice();
     void createSwapChain();
-    void cleanupSwapChain() ;
+    void cleanupSwapChain();
     void recreateSwapChain();
     void createImageViews();
-    VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
-    VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+    VkSurfaceFormatKHR chooseSwapSurfaceFormat(
+        const std::vector<VkSurfaceFormatKHR>& availableFormats);
+    VkPresentModeKHR chooseSwapPresentMode(
+        const std::vector<VkPresentModeKHR>& availablePresentModes);
     VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
     void createFramebuffers();
     void createVertexBuffer();
-    uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+    uint32_t findMemoryType(uint32_t typeFilter,
+                            VkMemoryPropertyFlags properties);
     void createSyncObjects();
     void createCommandBuffers();
-    void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+    void recordCommandBuffer(VkCommandBuffer commandBuffer,
+                             uint32_t imageIndex);
     void createCommandPool();
     void createRenderPass();
     void createGraphicsPipeline();

@@ -4,17 +4,15 @@
 #include <stdexcept>
 #include <vector>
 
-#include "Window.hpp"
 #include "VulkanSetup.hpp"
-
+#include "Window.hpp"
 
 class HelloTriangleApplication {
-public:
-    // HelloTriangleApplication();
+  public:
     HelloTriangleApplication() : window(), vulkanSetup(window) {}
     void run();
 
-private:
+  private:
     Window window;
     VulkanSetup vulkanSetup;
 
