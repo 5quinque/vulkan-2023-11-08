@@ -1,8 +1,6 @@
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
+#pragma once
 
-#ifndef WINDOWH
-#define WINDOWH
+#include <GLFW/glfw3.h>
 
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
@@ -20,5 +18,3 @@ class Window {
     static void framebufferResizeCallback(GLFWwindow* window, int width,
                                           int height);
 };
-
-#endif

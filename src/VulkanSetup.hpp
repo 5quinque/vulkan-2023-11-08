@@ -1,14 +1,7 @@
-#include <algorithm> // Necessary for std::clamp
-#include <cstring>
-#include <fstream> // Necessary for std::ifstream
-#include <iostream>
-#include <limits> // Necessary for std::numeric_limits
-#include <map>
-#include <optional>
-#include <set>
+#pragma once
 
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
+#include <iostream> // std::cout
+#include <optional> // std::optional
 
 #include "Vertex.hpp"
 #include "Window.hpp"
@@ -52,51 +45,55 @@ void DestroyDebugUtilsMessengerEXT(VkInstance instance,
 
 class VulkanSetup {
     Window& window;
+    VkRenderPass* renderPassPtr;
 
   public:
+    VulkanSetup(Window& window, VkRenderPass* renderPassPtr) : window(window) {
+        this->renderPassPtr = renderPassPtr;
+
+        // cout the render pass pointer
+        std::cout << "VulkanSetup, renderPassPtr: " << renderPassPtr
+                  << std::endl;
+    }
+
     VkDevice device;
-
-    VulkanSetup(Window& window) : window(window) {}
-
-    void initVulkan();
-    void drawFrame();
-    void cleanup();
-
-  private:
-    VkInstance instance;
-    VkDebugUtilsMessengerEXT debugMessenger;
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-
-    VkSurfaceKHR surface;
+    VkSwapchainKHR swapChain;
+    VkBuffer vertexBuffer;
+    VkFormat swapChainImageFormat;
+    VkExtent2D swapChainExtent;
 
     VkQueue graphicsQueue;
     VkQueue presentQueue;
 
-    VkSwapchainKHR swapChain;
-    std::vector<VkImage> swapChainImages;
-    VkFormat swapChainImageFormat;
-    VkExtent2D swapChainExtent;
-
-    std::vector<VkImageView> swapChainImageViews;
     std::vector<VkFramebuffer> swapChainFramebuffers;
 
-    VkRenderPass renderPass;
-    VkPipelineLayout pipelineLayout;
-    VkPipeline graphicsPipeline;
-
-    VkCommandPool commandPool;
-    std::vector<VkCommandBuffer> commandBuffers;
-
-    std::vector<VkSemaphore> imageAvailableSemaphores;
-    std::vector<VkSemaphore> renderFinishedSemaphores;
-    std::vector<VkFence> inFlightFences;
-
-    VkBuffer vertexBuffer;
-    VkDeviceMemory vertexBufferMemory;
-
-    uint32_t currentFrame = 0;
+    void recreateSwapChain();
+    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+    void cleanup();
 
     void createInstance();
+    void setupDebugMessenger();
+    void createSurface();
+    void pickPhysicalDevice();
+    void createLogicalDevice();
+    void createSwapChain();
+    void createImageViews();
+    void createFramebuffers();
+    void createVertexBuffer(std::vector<Vertex> vertices);
+
+  private:
+    VkInstance instance;
+    VkDebugUtilsMessengerEXT debugMessenger;
+
+    VkSurfaceKHR surface;
+
+    std::vector<VkImage> swapChainImages;
+
+    std::vector<VkImageView> swapChainImageViews;
+
+    VkDeviceMemory vertexBufferMemory;
+
     bool checkValidationLayerSupport();
     std::vector<const char*> getRequiredExtensions();
     void populateDebugMessengerCreateInfo(
@@ -106,35 +103,16 @@ class VulkanSetup {
                   VkDebugUtilsMessageTypeFlagsEXT messageType,
                   const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
                   void* pUserData);
-    void setupDebugMessenger();
-    void createSurface();
-    void pickPhysicalDevice();
     int rateDeviceSuitability(VkPhysicalDevice device);
     bool isDeviceSuitable(VkPhysicalDevice device);
-    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
     bool checkDeviceExtensionSupport(VkPhysicalDevice device);
     SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
-    void createLogicalDevice();
-    void createSwapChain();
     void cleanupSwapChain();
-    void recreateSwapChain();
-    void createImageViews();
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(
         const std::vector<VkSurfaceFormatKHR>& availableFormats);
     VkPresentModeKHR chooseSwapPresentMode(
         const std::vector<VkPresentModeKHR>& availablePresentModes);
     VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
-    void createFramebuffers();
-    void createVertexBuffer();
     uint32_t findMemoryType(uint32_t typeFilter,
                             VkMemoryPropertyFlags properties);
-    void createSyncObjects();
-    void createCommandBuffers();
-    void recordCommandBuffer(VkCommandBuffer commandBuffer,
-                             uint32_t imageIndex);
-    void createCommandPool();
-    void createRenderPass();
-    void createGraphicsPipeline();
-    VkShaderModule createShaderModule(const std::vector<char>& code);
-    static std::vector<char> readFile(const std::string& filename);
 };

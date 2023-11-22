@@ -29,6 +29,7 @@ sudo dnf install vulkan-tools \
 
 # wip structure
 
+Responsibilities of each class
 ```
 main.cpp: This file would contain the main() function and the high-level control flow of your program. It would instantiate objects and call methods from other classes.
 
@@ -42,7 +43,15 @@ Shader.hpp and Shader.cpp: These files would handle shader-related tasks, such a
 
 Window.hpp and Window.cpp: These files would handle window creation and input events. This would likely use a library like GLFW or SDL.
 
-Each .cpp file would #include its corresponding .hpp file. main.cpp would #include the .hpp files of the other classes it uses. Each class would be responsible for cleaning up its own Vulkan resources in its destructor.
+```
+
+Object Structure:
+```
+Application
+    Window
+    Render(Window&)
+        Shader(VkDevice&, VkRenderPass&)
+        VulkanSetup(Window&, VkRenderPass&)
 ```
 
 
@@ -61,3 +70,5 @@ https://github.com/KhronosGroup/Vulkan-Guide
 https://www.vulkan.org/learn#vulkan-tutorials
 
 https://renderdoc.org/
+
+https://cs.baylor.edu/~donahoo/tools/gdb/tutorial.html

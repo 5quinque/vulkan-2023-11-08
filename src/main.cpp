@@ -2,10 +2,10 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "application.hpp"
+#include "Application.hpp"
 
 int main() {
-    HelloTriangleApplication app;
+    Application app;
 
     std::cout << "Hello, Triangle!" << std::endl;
 

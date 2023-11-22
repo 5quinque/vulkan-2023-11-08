@@ -1,8 +1,10 @@
-#include <array>       // Necessary for std::array
-#include <glm/glm.hpp> // Necessary for glm::vec3
-#include <vector>
+#pragma once
 
-#include <vulkan/vulkan.h> // Necessary for VkVertexInputBindingDescription, VkVertexInputAttributeDescription
+#include <array>       // std::array
+#include <glm/glm.hpp> // glm::vec3
+#include <vector>      // std::vector
+
+#include <vulkan/vulkan.h> // VkVertexInputBindingDescription, VkVertexInputAttributeDescription
 
 struct Vertex {
     glm::vec2 pos;

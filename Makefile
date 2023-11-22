@@ -3,7 +3,7 @@ CFLAGS = -std=c++17 -O2
 LDFLAGS = -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi
 
 ODIR = build/objs
-_OBJS = Vertex.o Window.o VulkanSetup.o application.o main.o
+_OBJS = Shader.o Render.o Vertex.o Window.o VulkanSetup.o Application.o main.o
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 
 $(ODIR)/%.o: src/%.cpp
