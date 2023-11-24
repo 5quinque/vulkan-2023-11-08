@@ -72,3 +72,5 @@ https://www.vulkan.org/learn#vulkan-tutorials
 https://renderdoc.org/
 
 https://cs.baylor.edu/~donahoo/tools/gdb/tutorial.html
+
+https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator

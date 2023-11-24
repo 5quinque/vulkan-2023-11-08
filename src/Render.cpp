@@ -16,7 +16,7 @@ void Render::initVulkan() {
     shader.createGraphicsPipeline();
     vulkanSetup.createFramebuffers();
     createCommandPool();
-    vulkanSetup.createVertexBuffer(shader.t_vertices);
+    vulkanSetup.createVertexBuffer(shader.t_vertices, &commandPool);
     createCommandBuffers();
     createSyncObjects();
 }
