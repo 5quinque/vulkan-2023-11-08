@@ -17,6 +17,7 @@ void Render::initVulkan() {
     vulkanSetup.createFramebuffers();
     createCommandPool();
     vulkanSetup.createVertexBuffer(shader.t_vertices, &commandPool);
+    vulkanSetup.createIndexBuffer(shader.t_indices, &commandPool);
     createCommandBuffers();
     createSyncObjects();
 }
@@ -184,7 +185,12 @@ void Render::recordCommandBuffer(VkCommandBuffer commandBuffer,
     VkDeviceSize offsets[] = {0};
     vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
-    vkCmdDraw(commandBuffer, static_cast<uint32_t>(vertices.size()), 1, 0, 0);
+    vkCmdBindIndexBuffer(commandBuffer, vulkanSetup.indexBuffer, 0,
+                         VK_INDEX_TYPE_UINT16);
+
+    vkCmdDrawIndexed(commandBuffer,
+                     static_cast<uint32_t>(shader.t_indices.size()), 1, 0, 0,
+                     0);
 
     vkCmdEndRenderPass(commandBuffer);
 

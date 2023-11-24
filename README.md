@@ -59,6 +59,8 @@ Application
 
 https://vulkan-tutorial.com/
 
+https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkQueueFlagBits.html
+
 https://github.com/KhronosGroup/Vulkan-Docs
 
 https://github.com/David-DiGioia/vulkan-diagrams
@@ -74,3 +76,5 @@ https://renderdoc.org/
 https://cs.baylor.edu/~donahoo/tools/gdb/tutorial.html
 
 https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
+
+https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines

@@ -15,6 +15,7 @@ class Shader {
     VkPipeline graphicsPipeline;
 
     std::vector<Vertex> t_vertices;
+    std::vector<uint16_t> t_indices;
 
     Shader(VkDevice* devicePtr, VkRenderPass* renderPassPtr)
         : devicePtr(devicePtr), renderPassPtr(renderPassPtr) {
@@ -23,6 +24,7 @@ class Shader {
         std::cout << "Shader, renderPassPtr: " << renderPassPtr << std::endl;
 
         this->t_vertices = vertices;
+        this->t_indices = indices;
 
         // cout the vertices pointer
         std::cout << "Shader, vertices: " << &vertices << std::endl;

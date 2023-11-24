@@ -59,9 +59,10 @@ class VulkanSetup {
     VkDevice device;
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     VkSwapchainKHR swapChain;
-    VkBuffer vertexBuffer;
     VkFormat swapChainImageFormat;
     VkExtent2D swapChainExtent;
+    VkBuffer vertexBuffer;
+    VkBuffer indexBuffer;
 
     VkQueue graphicsQueue;
     VkQueue presentQueue;
@@ -82,6 +83,8 @@ class VulkanSetup {
     void createFramebuffers();
     void createVertexBuffer(std::vector<Vertex> vertices,
                             VkCommandPool* commandPool);
+    void createIndexBuffer(std::vector<uint16_t> indices,
+                           VkCommandPool* commandPool);
     void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
                       VkMemoryPropertyFlags properties, VkBuffer& buffer,
                       VkDeviceMemory& bufferMemory);
@@ -99,6 +102,7 @@ class VulkanSetup {
     std::vector<VkImageView> swapChainImageViews;
 
     VkDeviceMemory vertexBufferMemory;
+    VkDeviceMemory indexBufferMemory;
 
     bool checkValidationLayerSupport();
     std::vector<const char*> getRequiredExtensions();
