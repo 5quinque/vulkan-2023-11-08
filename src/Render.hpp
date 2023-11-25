@@ -10,10 +10,11 @@
 class Render {
     Window& window;
     VkRenderPass renderPass;
-    Shader shader;
 
   public:
     VulkanSetup vulkanSetup;
+    Shader shader;
+    VkCommandPool commandPool;
 
     Render(Window& window)
         : window(window), vulkanSetup(window, &renderPass),
@@ -29,7 +30,6 @@ class Render {
     void cleanup();
 
   private:
-    VkCommandPool commandPool;
     std::vector<VkCommandBuffer> commandBuffers;
     std::vector<VkFence> inFlightFences;
     std::vector<VkSemaphore> imageAvailableSemaphores;

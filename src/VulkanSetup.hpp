@@ -73,6 +73,10 @@ class VulkanSetup {
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
     void cleanup();
 
+    void setVertexBuffer(std::vector<Vertex> vertices,
+                         VkCommandPool* commandPoolPtr,
+                         bool createVertexBuffer = false);
+
     void createInstance();
     void setupDebugMessenger();
     void createSurface();

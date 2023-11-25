@@ -643,8 +643,15 @@ void VulkanSetup::createIndexBuffer(std::vector<uint16_t> indices,
 
 void VulkanSetup::createVertexBuffer(std::vector<Vertex> vertices,
                                      VkCommandPool* commandPoolPtr) {
+    setVertexBuffer(vertices, commandPoolPtr, true);
+}
+
+void VulkanSetup::setVertexBuffer(std::vector<Vertex> vertices,
+                                  VkCommandPool* commandPoolPtr,
+                                  bool createVertexBuffer) {
     VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
 
+    // Create a staging buffer
     VkBuffer stagingBuffer;
     VkDeviceMemory stagingBufferMemory;
     createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
@@ -652,19 +659,25 @@ void VulkanSetup::createVertexBuffer(std::vector<Vertex> vertices,
                      VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
                  stagingBuffer, stagingBufferMemory);
 
+    // Map the staging buffer memory, copy the vertex data to it, and unmap it
     void* data;
-
     vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
     memcpy(data, vertices.data(), (size_t)bufferSize);
     vkUnmapMemory(device, stagingBufferMemory);
 
-    createBuffer(
-        bufferSize,
-        VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
+    if (createVertexBuffer) {
+        // Create the vertex buffer
+        createBuffer(bufferSize,
+                     VK_BUFFER_USAGE_TRANSFER_DST_BIT |
+                         VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer,
+                     vertexBufferMemory);
+    }
 
+    // Copy the staging buffer to the vertex buffer
     copyBuffer(stagingBuffer, vertexBuffer, bufferSize, commandPoolPtr);
 
+    // Destroy the staging buffer
     vkDestroyBuffer(device, stagingBuffer, nullptr);
     vkFreeMemory(device, stagingBufferMemory, nullptr);
 }
