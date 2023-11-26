@@ -4,6 +4,10 @@
 
 #include "Vertex.hpp"
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
+#include <glm/glm.hpp> // glm::mat4
+
 // I'm still undecided if this is the right place for this struct.
 struct UniformBufferObject {
     glm::mat4 model;
@@ -20,6 +24,8 @@ class Shader {
 
   public:
     VkPipeline graphicsPipeline;
+    VkDescriptorSetLayout descriptorSetLayout;
+    VkPipelineLayout pipelineLayout;
 
     std::vector<Vertex> t_vertices;
     std::vector<uint16_t> t_indices;
@@ -45,9 +51,6 @@ class Shader {
     void cleanup();
 
   private:
-    VkDescriptorSetLayout descriptorSetLayout;
-    VkPipelineLayout pipelineLayout;
-
     static std::vector<char> readFile(const std::string& filename);
     VkShaderModule createShaderModule(const std::vector<char>& code);
 };

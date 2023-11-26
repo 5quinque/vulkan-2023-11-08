@@ -28,6 +28,8 @@ void Render::initVulkan() {
     vulkanSetup.createVertexBuffer(shader.t_vertices, &commandPool);
     vulkanSetup.createIndexBuffer(shader.t_indices, &commandPool);
     vulkanSetup.createUniformBuffers();
+    vulkanSetup.createDescriptorPool();
+    vulkanSetup.createDescriptorSets(&shader.descriptorSetLayout);
     createCommandBuffers();
     createSyncObjects();
 }
@@ -53,6 +55,8 @@ void Render::drawFrame() {
     } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
         throw std::runtime_error("failed to acquire swap chain image!");
     }
+
+    updateUniformBuffer(currentFrame);
 
     // Only reset the fence if we are submitting work
     vkResetFences(vulkanSetup.device, 1, &inFlightFences[currentFrame]);
@@ -121,7 +125,7 @@ void Render::updateUniformBuffer(uint32_t currentImage) {
     ubo.view =
         glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f),
                     glm::vec3(0.0f, 0.0f, 1.0f));
-    ubo.proj = glm::perspective(glm::radians(45.0f),
+    ubo.proj = glm::perspective(time * glm::radians(15.0f),
                                 vulkanSetup.swapChainExtent.width /
                                     (float)vulkanSetup.swapChainExtent.height,
                                 0.1f, 10.0f);
@@ -225,6 +229,10 @@ void Render::recordCommandBuffer(VkCommandBuffer commandBuffer,
 
     vkCmdBindIndexBuffer(commandBuffer, vulkanSetup.indexBuffer, 0,
                          VK_INDEX_TYPE_UINT16);
+
+    vkCmdBindDescriptorSets(
+        commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, shader.pipelineLayout,
+        0, 1, &vulkanSetup.descriptorSets[currentFrame], 0, nullptr);
 
     vkCmdDrawIndexed(commandBuffer,
                      static_cast<uint32_t>(shader.t_indices.size()), 1, 0, 0,
