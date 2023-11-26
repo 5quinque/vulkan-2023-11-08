@@ -1,5 +1,13 @@
 #include <iostream> // std::cout
 
+#define GLM_FORCE_RADIANS
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include <cstring>
+
+#include <chrono> // std::chrono::high_resolution_clock
+
 #include "Render.hpp"
 
 void Render::initVulkan() {
@@ -13,11 +21,13 @@ void Render::initVulkan() {
     vulkanSetup.createImageViews();
     createRenderPass();
     shader.loadShaders();
+    shader.createDescriptorSetLayout();
     shader.createGraphicsPipeline();
     vulkanSetup.createFramebuffers();
     createCommandPool();
     vulkanSetup.createVertexBuffer(shader.t_vertices, &commandPool);
     vulkanSetup.createIndexBuffer(shader.t_indices, &commandPool);
+    vulkanSetup.createUniformBuffers();
     createCommandBuffers();
     createSyncObjects();
 }
@@ -95,6 +105,34 @@ void Render::drawFrame() {
     }
 
     currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+}
+
+void Render::updateUniformBuffer(uint32_t currentImage) {
+    static auto startTime = std::chrono::high_resolution_clock::now();
+
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    float time = std::chrono::duration<float, std::chrono::seconds::period>(
+                     currentTime - startTime)
+                     .count();
+
+    UniformBufferObject ubo{};
+    ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f),
+                            glm::vec3(0.0f, 0.0f, 1.0f));
+    ubo.view =
+        glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f),
+                    glm::vec3(0.0f, 0.0f, 1.0f));
+    ubo.proj = glm::perspective(glm::radians(45.0f),
+                                vulkanSetup.swapChainExtent.width /
+                                    (float)vulkanSetup.swapChainExtent.height,
+                                0.1f, 10.0f);
+
+    ubo.proj[1][1] *= -1;
+
+    // Using a UBO this way is not the most efficient way to pass frequently
+    // changing values to the shader. A more efficient way to pass a small
+    // buffer of data to shaders are push constants.
+    // https://vulkan-tutorial.com/Uniform_buffers/Descriptor_layout_and_buffer
+    memcpy(vulkanSetup.uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
 }
 
 void Render::createSyncObjects() {
@@ -280,4 +318,7 @@ void Render::cleanup() {
     }
 
     vkDestroyCommandPool(vulkanSetup.device, commandPool, nullptr);
+
+    shader.cleanup();
+    vulkanSetup.cleanup();
 }

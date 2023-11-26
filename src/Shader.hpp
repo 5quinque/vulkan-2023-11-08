@@ -4,6 +4,13 @@
 
 #include "Vertex.hpp"
 
+// I'm still undecided if this is the right place for this struct.
+struct UniformBufferObject {
+    glm::mat4 model;
+    glm::mat4 view;
+    glm::mat4 proj;
+};
+
 class Shader {
     VkDevice* devicePtr;
     VkRenderPass* renderPassPtr;
@@ -34,8 +41,11 @@ class Shader {
     void createGraphicsPipeline();
     void destroyGraphicsPipeline();
     void destroyPipelineLayout();
+    void createDescriptorSetLayout();
+    void cleanup();
 
   private:
+    VkDescriptorSetLayout descriptorSetLayout;
     VkPipelineLayout pipelineLayout;
 
     static std::vector<char> readFile(const std::string& filename);

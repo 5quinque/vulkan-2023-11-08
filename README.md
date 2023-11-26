@@ -78,3 +78,5 @@ https://cs.baylor.edu/~donahoo/tools/gdb/tutorial.html
 https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
 
 https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines
+
+https://github.com/friendlyanon/cmake-init

@@ -6,6 +6,7 @@
 #include <set>       // std::set
 #include <vector>    // std::vector
 
+#include "Shader.hpp"
 #include "Vertex.hpp"
 #include "VulkanSetup.hpp"
 
@@ -567,6 +568,11 @@ void VulkanSetup::cleanup() {
     vkDestroyBuffer(device, vertexBuffer, nullptr);
     vkFreeMemory(device, vertexBufferMemory, nullptr);
 
+    for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+        vkDestroyBuffer(device, uniformBuffers[i], nullptr);
+        vkFreeMemory(device, uniformBuffersMemory[i], nullptr);
+    }
+
     vkDestroyDevice(device, nullptr);
 
     if (enableValidationLayers) {
@@ -595,7 +601,7 @@ void VulkanSetup::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
 
     // what's the difference between `bufferInfo.size` and
     // `memRequirements.size`?
-    std::cout << "createVertexBuffers: " << std::endl;
+    std::cout << "createBuffer: " << std::endl;
     std::cout << "bufferInfo.size: " << bufferInfo.size << std::endl;
     std::cout << "memRequirements.size: " << memRequirements.size << std::endl;
 
@@ -680,6 +686,24 @@ void VulkanSetup::setVertexBuffer(std::vector<Vertex> vertices,
     // Destroy the staging buffer
     vkDestroyBuffer(device, stagingBuffer, nullptr);
     vkFreeMemory(device, stagingBufferMemory, nullptr);
+}
+
+void VulkanSetup::createUniformBuffers() {
+    VkDeviceSize bufferSize = sizeof(UniformBufferObject);
+
+    uniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+    uniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);
+    uniformBuffersMapped.resize(MAX_FRAMES_IN_FLIGHT);
+
+    for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+        createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                         VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                     uniformBuffers[i], uniformBuffersMemory[i]);
+
+        vkMapMemory(device, uniformBuffersMemory[i], 0, bufferSize, 0,
+                    &uniformBuffersMapped[i]);
+    }
 }
 
 void VulkanSetup::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer,

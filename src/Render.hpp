@@ -27,6 +27,7 @@ class Render {
     void createCommandBuffers();
 
     void drawFrame();
+    void updateUniformBuffer(uint32_t currentImage);
     void cleanup();
 
   private:
