@@ -9,17 +9,18 @@
 struct Vertex {
     glm::vec2 pos;
     glm::vec3 color;
+    glm::vec2 texCoord;
 
     static VkVertexInputBindingDescription getBindingDescription();
-    static std::array<VkVertexInputAttributeDescription, 2>
+    static std::array<VkVertexInputAttributeDescription, 3>
     getAttributeDescriptions();
 };
 
 const std::vector<Vertex> vertices = {
-    {{-0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}}, // top left
-    {{0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}},  // top right
-    {{0.5f, 0.5f}, {0.0f, 0.8f, 0.0f}},   // bottom right
-    {{-0.5f, 0.5f}, {0.0f, 0.8f, 0.0f}}   // bottom left
+    {{-0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}, {1.0f, 0.0f}}, // top left
+    {{0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},  // top right
+    {{0.5f, 0.5f}, {0.0f, 0.8f, 0.0f}, {0.0f, 1.0f}},   // bottom right
+    {{-0.5f, 0.5f}, {0.0f, 0.8f, 0.0f}, {0.0f, 0.0f}}   // bottom left
 };
 
 // const std::vector<Vertex> vertices = {

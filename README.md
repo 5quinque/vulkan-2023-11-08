@@ -117,3 +117,5 @@ https://github.com/friendlyanon/cmake-init
 https://raytracing.github.io/books/RayTracingInOneWeekend.html
 
 https://registry.khronos.org/vulkan/specs/1.3-extensions/html/chap7.html#VkPipelineStageFlagBits
+
+https://github.com/KhronosGroup/Vulkan-ValidationLayers/blob/main/docs/debug_printf.md

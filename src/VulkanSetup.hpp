@@ -6,6 +6,8 @@
 #include "Vertex.hpp"
 #include "Window.hpp"
 
+// #define NDEBUG
+
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
 #else
