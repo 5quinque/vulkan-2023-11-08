@@ -63,6 +63,8 @@ class VulkanSetup {
     VkExtent2D swapChainExtent;
     VkBuffer vertexBuffer;
     VkBuffer indexBuffer;
+    VkImageView textureImageView;
+    VkSampler textureSampler;
 
     VkQueue graphicsQueue;
     VkQueue presentQueue;
@@ -116,6 +118,8 @@ class VulkanSetup {
                                VkCommandPool* commandPoolPtr);
     void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width,
                            uint32_t height, VkCommandPool* commandPoolPtr);
+    void createTextureImageView();
+    void createTextureSampler();
 
   private:
     VkInstance instance;
@@ -156,4 +160,5 @@ class VulkanSetup {
     VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
     uint32_t findMemoryType(uint32_t typeFilter,
                             VkMemoryPropertyFlags properties);
+    VkImageView createImageView(VkImage image, VkFormat format);
 };

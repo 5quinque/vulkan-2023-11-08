@@ -1,6 +1,6 @@
 STB_INCLUDE_PATH = ./libs
 
-CFLAGS = -std=c++17 -O2 -I$(STB_INCLUDE_PATH)
+CFLAGS = -std=c++17 -g -O1 -I$(STB_INCLUDE_PATH)
 
 LDFLAGS = -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi
 
@@ -29,3 +29,6 @@ shaders:
 
 clean_shaders:
 	rm -f shaders/*.spv
+
+valgrind:
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose ./dist/VulkanTest

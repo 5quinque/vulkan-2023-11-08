@@ -36,6 +36,77 @@ void DestroyDebugUtilsMessengerEXT(VkInstance instance,
     }
 }
 
+void VulkanSetup::createTextureImageView() {
+    textureImageView = createImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB);
+}
+
+VkImageView VulkanSetup::createImageView(VkImage image, VkFormat format) {
+    VkImageViewCreateInfo viewInfo{};
+    viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    viewInfo.image = image;
+    viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    viewInfo.format = format;
+    viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    viewInfo.subresourceRange.baseMipLevel = 0;
+    viewInfo.subresourceRange.levelCount = 1;
+    viewInfo.subresourceRange.baseArrayLayer = 0;
+    viewInfo.subresourceRange.layerCount = 1;
+
+    VkImageView imageView;
+    if (vkCreateImageView(device, &viewInfo, nullptr, &imageView) !=
+        VK_SUCCESS) {
+        throw std::runtime_error("failed to create image view!");
+    }
+
+    return imageView;
+}
+
+void VulkanSetup::createTextureSampler() {
+    VkSamplerCreateInfo samplerInfo{};
+    samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+    samplerInfo.magFilter = VK_FILTER_LINEAR; // VK_FILTER_NEAREST;
+    samplerInfo.minFilter = VK_FILTER_LINEAR; // VK_FILTER_NEAREST;
+
+    // VK_SAMPLER_ADDRESS_MODE_REPEAT: Repeat the texture when going beyond the
+    // image dimensions. VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT: Like repeat,
+    // but inverts the coordinates to mirror the image when going beyond the
+    // dimensions. VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE: Take the color of the
+    // edge closest to the coordinate beyond the image dimensions.
+    // VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE: Like clamp to edge, but
+    // instead uses the edge opposite to the closest edge.
+    // VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER: Return a solid color when
+    // sampling beyond the dimensions of the image.
+    samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+
+    samplerInfo.anisotropyEnable = VK_TRUE;
+
+    VkPhysicalDeviceProperties properties{};
+    vkGetPhysicalDeviceProperties(physicalDevice, &properties);
+    samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
+
+    samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+    // The unnormalizedCoordinates field specifies which coordinate system
+    // you want to use to address texels in an image. If this field is VK_TRUE,
+    // then you can simply use coordinates within the [0, texWidth) and [0,
+    // texHeight) range. If it is VK_FALSE, then the texels are addressed using
+    // the [0, 1) range on all axes. Real-world applications almost always use
+    // normalized coordinates, because then it's possible to use textures of
+    // varying resolutions with the exact same coordinates.
+    samplerInfo.unnormalizedCoordinates = VK_FALSE;
+
+    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+    samplerInfo.mipLodBias = 0.0f;
+    samplerInfo.minLod = 0.0f;
+    samplerInfo.maxLod = 0.0f;
+
+    if (vkCreateSampler(device, &samplerInfo, nullptr, &textureSampler) !=
+        VK_SUCCESS) {
+        throw std::runtime_error("failed to create texture sampler!");
+    }
+}
+
 void VulkanSetup::createTextureImage(VkCommandPool* commandPoolPtr) {
     int texWidth, texHeight, texChannels;
     stbi_uc* pixels = stbi_load("textures/chess-1215079_1280.jpg", &texWidth,
@@ -390,6 +461,9 @@ bool VulkanSetup::isDeviceSuitable(VkPhysicalDevice device) {
                             !swapChainSupport.presentModes.empty();
     }
 
+    VkPhysicalDeviceFeatures supportedFeatures;
+    vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
+
     return indices.isComplete() && extensionsSupported && swapChainAdequate;
 }
 
@@ -495,6 +569,7 @@ void VulkanSetup::createLogicalDevice() {
     }
 
     VkPhysicalDeviceFeatures deviceFeatures{};
+    deviceFeatures.samplerAnisotropy = VK_TRUE;
 
     VkDeviceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -603,6 +678,13 @@ void VulkanSetup::cleanupSwapChain() {
 }
 
 void VulkanSetup::recreateSwapChain() {
+    // Fullscreening with F11 (Window::keyCallback) causes this function
+    // to be called constantly. Eventually causing a crash:
+    // BadAccess (attempt to access private resource denied)
+    //
+
+    std::cout << "recreateSwapChain" << std::endl;
+
     int width = 0, height = 0;
     glfwGetFramebufferSize(window.window, &width, &height);
 
@@ -650,28 +732,8 @@ void VulkanSetup::createImageViews() {
     swapChainImageViews.resize(swapChainImages.size());
 
     for (size_t i = 0; i < swapChainImages.size(); i++) {
-        VkImageViewCreateInfo createInfo{};
-        createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-        createInfo.image = swapChainImages[i];
-
-        createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-        createInfo.format = swapChainImageFormat;
-
-        createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-        createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-        createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-        createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-
-        createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        createInfo.subresourceRange.baseMipLevel = 0;
-        createInfo.subresourceRange.levelCount = 1;
-        createInfo.subresourceRange.baseArrayLayer = 0;
-        createInfo.subresourceRange.layerCount = 1;
-
-        if (vkCreateImageView(device, &createInfo, nullptr,
-                              &swapChainImageViews[i]) != VK_SUCCESS) {
-            throw std::runtime_error("failed to create image views!");
-        }
+        swapChainImageViews[i] =
+            createImageView(swapChainImages[i], swapChainImageFormat);
     }
 }
 
@@ -723,6 +785,9 @@ VulkanSetup::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) {
 
 void VulkanSetup::cleanup() {
     cleanupSwapChain();
+
+    vkDestroySampler(device, textureSampler, nullptr);
+    vkDestroyImageView(device, textureImageView, nullptr);
 
     vkDestroyImage(device, textureImage, nullptr);
     vkFreeMemory(device, textureImageMemory, nullptr);

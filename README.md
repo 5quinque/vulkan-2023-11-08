@@ -68,6 +68,11 @@ Application
          execute the commands that have been recorded so far. It's best to do this after the texture mapping 
          works to check if the texture resources are still set up correctly.
 
+  `[ ]` VulkanSetup::recreateSwapChain - Fullscreening with F11 (Window::keyCallback) causes this function
+         to be called constantly. Eventually causing a crash:
+         BadAccess (attempt to access private resource denied)
+
+
 
 # vulkan shader
 
