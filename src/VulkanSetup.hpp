@@ -72,6 +72,9 @@ class VulkanSetup {
 
     std::vector<VkDescriptorSet> descriptorSets;
 
+    VkImage textureImage;
+    VkDeviceMemory textureImageMemory;
+
     void recreateSwapChain();
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
     void cleanup();
@@ -100,6 +103,19 @@ class VulkanSetup {
                       VkDeviceMemory& bufferMemory);
     void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size,
                     VkCommandPool* commandPool);
+    void createTextureImage(VkCommandPool* commandPoolPtr);
+    void createImage(uint32_t width, uint32_t height, VkFormat format,
+                     VkImageTiling tiling, VkImageUsageFlags usage,
+                     VkMemoryPropertyFlags properties, VkImage& image,
+                     VkDeviceMemory& imageMemory);
+    VkCommandBuffer beginSingleTimeCommands(VkCommandPool* commandPoolPtr);
+    void endSingleTimeCommands(VkCommandBuffer commandBuffer,
+                               VkCommandPool* commandPoolPtr);
+    void transitionImageLayout(VkImage image, VkFormat format,
+                               VkImageLayout oldLayout, VkImageLayout newLayout,
+                               VkCommandPool* commandPoolPtr);
+    void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width,
+                           uint32_t height, VkCommandPool* commandPoolPtr);
 
   private:
     VkInstance instance;

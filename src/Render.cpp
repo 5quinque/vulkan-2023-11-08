@@ -25,6 +25,7 @@ void Render::initVulkan() {
     shader.createGraphicsPipeline();
     vulkanSetup.createFramebuffers();
     createCommandPool();
+    vulkanSetup.createTextureImage(&commandPool);
     vulkanSetup.createVertexBuffer(shader.t_vertices, &commandPool);
     vulkanSetup.createIndexBuffer(shader.t_indices, &commandPool);
     vulkanSetup.createUniformBuffers();
