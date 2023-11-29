@@ -12,6 +12,8 @@ class Application {
     void run();
 
   private:
+    std::string applicationName = "Vulkan Test";
+
     void mainLoop();
     void cleanup();
 };

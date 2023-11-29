@@ -8,10 +8,9 @@ void Application::run() {
 }
 
 void Application::mainLoop() {
-    // variable to hold the time of the last frame
-    float lastUpdate = 0.0f;
-
     while (!glfwWindowShouldClose(window.window)) {
+        window.updateTitle(applicationName);
+
         glfwPollEvents();
         render.drawFrame();
     }

@@ -14,8 +14,14 @@ class Window {
     void initWindow();
     void cleanup();
 
+    void updateTitle(std::string title);
+
   private:
     bool fullscreen = false;
+
+    // variable to hold the time of the last frame
+    float lastUpdate = 0.0f;
+    int frameCount = 0;
 
     static void framebufferResizeCallback(GLFWwindow* window, int width,
                                           int height);
