@@ -32,7 +32,7 @@ Vertex::getAttributeDescriptions() {
     // 32-bit unsigned integers double: VK_FORMAT_R64_SFLOAT, a double-precision
     // (64-bit) float
     attributeDescriptions[0].format =
-        VK_FORMAT_R32G32_SFLOAT; // format of the data
+        VK_FORMAT_R32G32B32_SFLOAT; // format of the data
     attributeDescriptions[0].offset = offsetof(
         Vertex, pos); // offset of the attribute in the vertex structure
 

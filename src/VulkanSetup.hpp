@@ -79,7 +79,11 @@ class VulkanSetup {
     VkImage textureImage;
     VkDeviceMemory textureImageMemory;
 
-    void recreateSwapChain();
+    VkImage depthImage;
+    VkDeviceMemory depthImageMemory;
+    VkImageView depthImageView;
+
+    void recreateSwapChain(VkCommandPool* commandPoolPtr);
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
     void cleanup();
 
@@ -122,6 +126,8 @@ class VulkanSetup {
                            uint32_t height, VkCommandPool* commandPoolPtr);
     void createTextureImageView();
     void createTextureSampler();
+    void createDepthResources(VkCommandPool* commandPoolPtr);
+    VkFormat findDepthFormat();
 
   private:
     VkInstance instance;
@@ -162,5 +168,10 @@ class VulkanSetup {
     VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
     uint32_t findMemoryType(uint32_t typeFilter,
                             VkMemoryPropertyFlags properties);
-    VkImageView createImageView(VkImage image, VkFormat format);
+    VkImageView createImageView(VkImage image, VkFormat format,
+                                VkImageAspectFlags aspectFlags);
+    VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates,
+                                 VkImageTiling tiling,
+                                 VkFormatFeatureFlags features);
+    bool hasStencilComponent(VkFormat format);
 };
