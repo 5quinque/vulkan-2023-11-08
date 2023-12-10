@@ -427,9 +427,16 @@ void VulkanSetup::pickPhysicalDevice() {
     // Use an ordered map to automatically sort candidates by increasing score
     std::multimap<int, VkPhysicalDevice> candidates;
 
+    int deviceIndex = 0;
     for (const auto& device : devices) {
-        int score = rateDeviceSuitability(device);
+        // if devices have an equal suitability score, the one with the
+        // lower index is preferred.
+        int score = rateDeviceSuitability(device) + (100 - deviceIndex);
         candidates.insert(std::make_pair(score, device));
+
+        std::cout << "device: " << device << " score: " << score << std::endl;
+
+        deviceIndex++;
     }
 
     // Check if the best candidate is suitable at all
@@ -446,6 +453,13 @@ int VulkanSetup::rateDeviceSuitability(VkPhysicalDevice device) {
     VkPhysicalDeviceFeatures deviceFeatures;
     vkGetPhysicalDeviceProperties(device, &deviceProperties);
     vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+
+    // Print out device information
+    std::cout << "Device Name: " << deviceProperties.deviceName << std::endl;
+    std::cout << "Driver Version: " << deviceProperties.driverVersion
+              << std::endl;
+    std::cout << "Vendor ID: " << deviceProperties.vendorID << std::endl;
+    std::cout << "Device ID: " << deviceProperties.deviceID << std::endl;
 
     int score = 0;
 
