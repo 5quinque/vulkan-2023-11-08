@@ -2,7 +2,7 @@
 
 #include <iostream> // std::cout
 
-#include "Vertex.hpp"
+#include <vulkan/vulkan.h>
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
@@ -27,20 +27,11 @@ class Shader {
     VkDescriptorSetLayout descriptorSetLayout;
     VkPipelineLayout pipelineLayout;
 
-    std::vector<Vertex> t_vertices;
-    std::vector<uint16_t> t_indices;
-
     Shader(VkDevice* devicePtr, VkRenderPass* renderPassPtr)
         : devicePtr(devicePtr), renderPassPtr(renderPassPtr) {
         // print the render pass pointer
         std::cout << "Shader, devicePtr: " << devicePtr << std::endl;
         std::cout << "Shader, renderPassPtr: " << renderPassPtr << std::endl;
-
-        this->t_vertices = vertices;
-        this->t_indices = indices;
-
-        // cout the vertices pointer
-        std::cout << "Shader, vertices: " << &vertices << std::endl;
     }
 
     void loadShaders();

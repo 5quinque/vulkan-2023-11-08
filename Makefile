@@ -1,6 +1,9 @@
-STB_INCLUDE_PATH = ./libs
+DEBUG = 0
+DEBUG_FLAGS = -g -O3 -fno-inline
 
-CFLAGS = -std=c++17 -g -O1 -I$(STB_INCLUDE_PATH)
+LOCAL_INCLUDE_PATH = ./libs
+
+CFLAGS = -std=c++17 -O3 -I$(LOCAL_INCLUDE_PATH) -DTRACY_ENABLE
 
 LDFLAGS = -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi
 

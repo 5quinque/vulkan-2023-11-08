@@ -89,6 +89,29 @@ You can find the full list of alignment requirements in [the specification](http
 
 https://vulkan-tutorial.com/en/Uniform_buffers/Descriptor_pool_and_sets
 
+# tracy
+
+https://github.com/wolfpld/tracy
+https://github.com/wolfpld/tracy/releases/latest/download/tracy.pdf
+
+clone `tracy` repo to the libs directory
+
+include tracy source files
+
+```cpp
+#include <tracy/public/tracy/Tracy.hpp>
+#include <tracy/public/TracyClient.cpp>
+#include <tracy/public/tracy/TracyVulkan.hpp>
+```
+
+build the profiler
+
+```shell
+cd libs/tracy/profiler/build/unix
+make release
+./Tracy-release
+```
+
 # resources
 
 https://vulkan-tutorial.com/

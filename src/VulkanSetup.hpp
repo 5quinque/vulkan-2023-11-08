@@ -1,7 +1,8 @@
 #pragma once
 
-#include <iostream> // std::cout
-#include <optional> // std::optional
+#include <iostream>      // std::cout
+#include <optional>      // std::optional
+#include <unordered_map> // std::unordered_map
 
 #include "Vertex.hpp"
 #include "Window.hpp"
@@ -58,6 +59,15 @@ class VulkanSetup {
                   << std::endl;
     }
 
+    const uint32_t WIDTH = 800;
+    const uint32_t HEIGHT = 600;
+
+    const std::string MODEL_PATH = "models/viking_room.obj";
+    const std::string TEXTURE_PATH = "textures/viking_room.png";
+    std::vector<Vertex> vertices;
+    std::vector<uint32_t> indices;
+    std::unordered_map<Vertex, uint32_t> uniqueVertices{};
+
     VkDevice device;
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     VkSwapchainKHR swapChain;
@@ -99,10 +109,8 @@ class VulkanSetup {
     void createSwapChain();
     void createImageViews();
     void createFramebuffers();
-    void createVertexBuffer(std::vector<Vertex> vertices,
-                            VkCommandPool* commandPool);
-    void createIndexBuffer(std::vector<uint16_t> indices,
-                           VkCommandPool* commandPool);
+    void createVertexBuffer(VkCommandPool* commandPool);
+    void createIndexBuffer(VkCommandPool* commandPool);
     void createUniformBuffers();
     void createDescriptorPool();
     void createDescriptorSets(VkDescriptorSetLayout* descriptorSetLayoutPtr);
@@ -128,6 +136,7 @@ class VulkanSetup {
     void createTextureSampler();
     void createDepthResources(VkCommandPool* commandPoolPtr);
     VkFormat findDepthFormat();
+    void loadModel();
 
   private:
     VkInstance instance;

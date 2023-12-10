@@ -30,8 +30,9 @@ void Render::initVulkan() {
     vulkanSetup.createTextureImage(&commandPool);
     vulkanSetup.createTextureImageView();
     vulkanSetup.createTextureSampler();
-    vulkanSetup.createVertexBuffer(shader.t_vertices, &commandPool);
-    vulkanSetup.createIndexBuffer(shader.t_indices, &commandPool);
+    vulkanSetup.loadModel();
+    vulkanSetup.createVertexBuffer(&commandPool);
+    vulkanSetup.createIndexBuffer(&commandPool);
     vulkanSetup.createUniformBuffers();
     vulkanSetup.createDescriptorPool();
     vulkanSetup.createDescriptorSets(&shader.descriptorSetLayout);
@@ -120,21 +121,35 @@ void Render::updateUniformBuffer(uint32_t currentImage) {
     static auto startTime = std::chrono::high_resolution_clock::now();
 
     auto currentTime = std::chrono::high_resolution_clock::now();
+
+    // time since the program started
     float time = std::chrono::duration<float, std::chrono::seconds::period>(
                      currentTime - startTime)
                      .count();
 
     UniformBufferObject ubo{};
+
+    // the model is rotated around the z-axis
     ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f),
                             glm::vec3(0.0f, 0.0f, 1.0f));
+
+    // the view is rotated around the x-axis
     ubo.view =
         glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f),
                     glm::vec3(0.0f, 0.0f, 1.0f));
-    ubo.proj = glm::perspective(time * glm::radians(15.0f),
+
+    // the projection is a perspective projection
+    // ubo.proj = glm::perspective(time * glm::radians(15.0f),
+    //                             vulkanSetup.swapChainExtent.width /
+    //                                 (float)vulkanSetup.swapChainExtent.height,
+    //                             0.1f, 10.0f);
+
+    ubo.proj = glm::perspective(glm::radians(45.0f),
                                 vulkanSetup.swapChainExtent.width /
                                     (float)vulkanSetup.swapChainExtent.height,
                                 0.1f, 10.0f);
 
+    // the projection is an orthographic projection
     ubo.proj[1][1] *= -1;
 
     // Using a UBO this way is not the most efficient way to pass frequently
@@ -236,14 +251,14 @@ void Render::recordCommandBuffer(VkCommandBuffer commandBuffer,
     vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
     vkCmdBindIndexBuffer(commandBuffer, vulkanSetup.indexBuffer, 0,
-                         VK_INDEX_TYPE_UINT16);
+                         VK_INDEX_TYPE_UINT32);
 
     vkCmdBindDescriptorSets(
         commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, shader.pipelineLayout,
         0, 1, &vulkanSetup.descriptorSets[currentFrame], 0, nullptr);
 
     vkCmdDrawIndexed(commandBuffer,
-                     static_cast<uint32_t>(shader.t_indices.size()), 1, 0, 0,
+                     static_cast<uint32_t>(vulkanSetup.indices.size()), 1, 0, 0,
                      0);
 
     vkCmdEndRenderPass(commandBuffer);

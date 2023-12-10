@@ -12,6 +12,8 @@ void Application::mainLoop() {
         window.updateTitle(applicationName);
 
         glfwPollEvents();
+
+        // std::cout << "mainLoop: render.drawFrame()" << std::endl;
         render.drawFrame();
     }
 

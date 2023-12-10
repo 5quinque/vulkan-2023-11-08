@@ -1,18 +1,16 @@
-#include <fstream> // std::ifstream
+#include <fstream>   // std::ifstream
+#include <iostream>  // std::cout
+#include <stdexcept> // std::runtime_error
+#include <vector>    // std::vector
 
 #include <vulkan/vulkan.h>
 
 #include "Shader.hpp"
+#include "Vertex.hpp"
 
 void Shader::loadShaders() {
     auto vertShaderCode = readFile("shaders/vert.spv");
     auto fragShaderCode = readFile("shaders/frag.spv");
-
-    // print size of shader code
-    // std::cout << "vertShaderCode.size(): " << vertShaderCode.size() <<
-    // std::endl; std::cout << "fragShaderCode.size(): " <<
-    // fragShaderCode.size()
-    // << std::endl;
 
     vertShaderModule = createShaderModule(vertShaderCode);
     fragShaderModule = createShaderModule(fragShaderCode);
