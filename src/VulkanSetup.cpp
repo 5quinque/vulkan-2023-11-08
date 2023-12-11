@@ -427,16 +427,11 @@ void VulkanSetup::pickPhysicalDevice() {
     // Use an ordered map to automatically sort candidates by increasing score
     std::multimap<int, VkPhysicalDevice> candidates;
 
-    int deviceIndex = 0;
     for (const auto& device : devices) {
-        // if devices have an equal suitability score, the one with the
-        // lower index is preferred.
-        int score = rateDeviceSuitability(device) + (100 - deviceIndex);
+        int score = rateDeviceSuitability(device);
         candidates.insert(std::make_pair(score, device));
 
         std::cout << "device: " << device << " score: " << score << std::endl;
-
-        deviceIndex++;
     }
 
     // Check if the best candidate is suitable at all
@@ -473,6 +468,17 @@ int VulkanSetup::rateDeviceSuitability(VkPhysicalDevice device) {
 
     // Application can't function without geometry shaders
     if (!deviceFeatures.geometryShader) {
+        return 0;
+    }
+
+    // Convert deviceName to lowercase
+    std::string deviceNameLower(deviceProperties.deviceName);
+    std::transform(deviceNameLower.begin(), deviceNameLower.end(),
+                   deviceNameLower.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+
+    // Check if the device is "llvmpipe"
+    if (deviceNameLower.find("llvmpipe") != std::string::npos) {
         return 0;
     }
 
