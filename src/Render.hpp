@@ -4,6 +4,7 @@
 
 #include <vulkan/vulkan.h>
 
+#include "Camera.hpp"
 #include "Shader.hpp"
 #include "VulkanSetup.hpp"
 
@@ -26,8 +27,8 @@ class Render {
     void createSyncObjects();
     void createCommandBuffers();
 
-    void drawFrame();
-    void updateUniformBuffer(uint32_t currentImage);
+    void drawFrame(Camera::Matrices& matrices);
+    void updateUniformBuffer(uint32_t currentImage, Camera::Matrices& matrices);
     void cleanup();
 
   private:

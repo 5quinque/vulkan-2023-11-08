@@ -1,9 +1,9 @@
 DEBUG = 0
-DEBUG_FLAGS = -g -O3 -fno-inline
+DEBUG_FLAGS = -g -fno-inline
 
 LOCAL_INCLUDE_PATH = ./libs
 
-CFLAGS = -std=c++17 -O3 -I$(LOCAL_INCLUDE_PATH) -DTRACY_ENABLE
+CFLAGS = -std=c++17 -O3 $(DEBUG_FLAGS) -I$(LOCAL_INCLUDE_PATH) -DTRACY_ENABLE
 
 LDFLAGS = -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi
 

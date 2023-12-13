@@ -62,8 +62,8 @@ class VulkanSetup {
     const uint32_t WIDTH = 800;
     const uint32_t HEIGHT = 600;
 
-    const std::string MODEL_PATH = "models/viking_room.obj";
-    const std::string TEXTURE_PATH = "textures/viking_room.png";
+    const std::string MODEL_PATH = "models/cube.obj";
+    const std::string TEXTURE_PATH = "textures/the_metamorphosis.jpg";
     std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
     std::unordered_map<Vertex, uint32_t> uniqueVertices{};

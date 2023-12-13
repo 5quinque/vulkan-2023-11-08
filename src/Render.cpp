@@ -7,8 +7,7 @@
 
 #include <cstring>
 
-#include <chrono> // std::chrono::high_resolution_clock
-
+#include "Camera.hpp"
 #include "Render.hpp"
 
 void Render::initVulkan() {
@@ -40,7 +39,7 @@ void Render::initVulkan() {
     createSyncObjects();
 }
 
-void Render::drawFrame() {
+void Render::drawFrame(Camera::Matrices& matrices) {
     // https://vulkan-tutorial.com/en/Drawing_a_triangle/Drawing/Rendering_and_presentation#page_Outline-of-a-frame
     // At a high level, rendering a frame in Vulkan consists of a common set of
     // steps:
@@ -62,7 +61,7 @@ void Render::drawFrame() {
         throw std::runtime_error("failed to acquire swap chain image!");
     }
 
-    updateUniformBuffer(currentFrame);
+    updateUniformBuffer(currentFrame, matrices);
 
     // Only reset the fence if we are submitting work
     vkResetFences(vulkanSetup.device, 1, &inFlightFences[currentFrame]);
@@ -117,40 +116,15 @@ void Render::drawFrame() {
     currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
-void Render::updateUniformBuffer(uint32_t currentImage) {
-    static auto startTime = std::chrono::high_resolution_clock::now();
-
-    auto currentTime = std::chrono::high_resolution_clock::now();
-
-    // time since the program started
-    float time = std::chrono::duration<float, std::chrono::seconds::period>(
-                     currentTime - startTime)
-                     .count();
-
+void Render::updateUniformBuffer(uint32_t currentImage,
+                                 Camera::Matrices& matrices) {
     UniformBufferObject ubo{};
 
     // the model is rotated around the z-axis
-    ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f),
+    ubo.model = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f),
                             glm::vec3(0.0f, 0.0f, 1.0f));
-
-    // the view is rotated around the x-axis
-    ubo.view =
-        glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f),
-                    glm::vec3(0.0f, 0.0f, 1.0f));
-
-    // the projection is a perspective projection
-    // ubo.proj = glm::perspective(time * glm::radians(15.0f),
-    //                             vulkanSetup.swapChainExtent.width /
-    //                                 (float)vulkanSetup.swapChainExtent.height,
-    //                             0.1f, 10.0f);
-
-    ubo.proj = glm::perspective(glm::radians(45.0f),
-                                vulkanSetup.swapChainExtent.width /
-                                    (float)vulkanSetup.swapChainExtent.height,
-                                0.1f, 10.0f);
-
-    // the projection is an orthographic projection
-    ubo.proj[1][1] *= -1;
+    ubo.view = matrices.view;
+    ubo.proj = matrices.perspective;
 
     // Using a UBO this way is not the most efficient way to pass frequently
     // changing values to the shader. A more efficient way to pass a small

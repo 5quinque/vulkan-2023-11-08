@@ -2,11 +2,17 @@
 
 #include <GLFW/glfw3.h>
 
+#include "Camera.hpp"
+
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
 
 class Window {
+    Camera& camera;
+
   public:
+    Window(Camera& camera) : camera(camera) {}
+
     bool framebufferResized = false;
 
     GLFWwindow* window;
@@ -28,4 +34,5 @@ class Window {
 
     static void keyCallback(GLFWwindow* window, int key, int scancode,
                             int action, int mods);
+    static void mouseCallback(GLFWwindow* window, double xpos, double ypos);
 };

@@ -146,4 +146,9 @@ https://github.com/KhronosGroup/Vulkan-ValidationLayers/blob/main/docs/debug_pri
 
 https://developer.nvidia.com/vulkan-memory-management/
 
+http://assimp.org/
+
+https://en.cppreference.com/w/cpp/language/raii
+
+https://vkguide.dev/docs/chapter-3/push_constants/
 

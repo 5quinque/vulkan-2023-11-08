@@ -14,6 +14,9 @@ void Window::initWindow() {
     glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
 
     glfwSetKeyCallback(window, keyCallback);
+    glfwSetCursorPosCallback(window, mouseCallback);
+
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Window::updateTitle(std::string title) {
@@ -34,6 +37,31 @@ void Window::updateTitle(std::string title) {
     }
 
     frameCount++;
+}
+
+void Window::mouseCallback(GLFWwindow* window, double xpos, double ypos) {
+    // [TODO] alt+tab'ing fucks this up
+
+    auto app = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+
+    if (app->camera.mouse.firstMouse) {
+        // when the window is initialised set the lastX and lastY to the current
+        if (app->camera.mouse.lastX != 0.0f &&
+            app->camera.mouse.lastY != 0.0f) {
+            app->camera.mouse.firstMouse = false;
+        }
+        app->camera.mouse.lastX = xpos;
+        app->camera.mouse.lastY = ypos;
+    }
+
+    int32_t dx = xpos - app->camera.mouse.lastX;
+    int32_t dy = ypos - app->camera.mouse.lastY;
+
+    app->camera.rotate(glm::vec3(-dy * app->camera.rotationSpeed,
+                                 dx * app->camera.rotationSpeed, 0.0f));
+
+    app->camera.mouse.lastX = xpos;
+    app->camera.mouse.lastY = ypos;
 }
 
 void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action,
@@ -57,6 +85,47 @@ void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action,
             glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, WIDTH,
                                  HEIGHT, GLFW_DONT_CARE);
         }
+    }
+
+    // [TODO] cleanup key handling
+    // w, a, s, d
+    if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+        app->camera.keys.up = true;
+    }
+    if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
+        app->camera.keys.up = false;
+    }
+    if (key == GLFW_KEY_A && action == GLFW_PRESS) {
+        app->camera.keys.left = true;
+    }
+    if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
+        app->camera.keys.left = false;
+    }
+    if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+        app->camera.keys.down = true;
+    }
+    if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
+        app->camera.keys.down = false;
+    }
+    if (key == GLFW_KEY_D && action == GLFW_PRESS) {
+        app->camera.keys.right = true;
+    }
+    if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
+        app->camera.keys.right = false;
+    }
+
+    if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS) {
+        app->camera.keys.shift = true;
+    }
+    if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_RELEASE) {
+        app->camera.keys.shift = false;
+    }
+
+    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+        app->camera.keys.space = true;
+    }
+    if (key == GLFW_KEY_SPACE && action == GLFW_RELEASE) {
+        app->camera.keys.space = false;
     }
 }
 
