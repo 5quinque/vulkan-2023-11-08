@@ -9,6 +9,9 @@ void Model::loadModel() {
     std::vector<tinyobj::material_t> materials;
     std::string warn, err;
 
+    std::cout << "Model::loadModel(), MODEL_PATH: " << this->MODEL_PATH
+              << std::endl;
+
     if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err,
                           MODEL_PATH.c_str())) {
         throw std::runtime_error(warn + err);

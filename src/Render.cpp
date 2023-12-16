@@ -8,6 +8,7 @@
 #include <cstring> // memcpy
 
 #include "Camera.hpp"
+#include "Models/Box.hpp"
 #include "Render.hpp"
 
 void Render::initVulkan() {
@@ -30,22 +31,26 @@ void Render::initVulkan() {
     // this is not the correct place to load models
     // create 10 models and add them to the vector
     for (int i = 0; i < 10; i++) {
-        Model model(i);
-        model.loadModel();
-        models.push_back(model);
+        // Box box(glm::vec3(1.0f, 1.0f, 1.0f));
+        Box box;
+        box.loadModel();
+        boxes.push_back(box);
     }
 
-    vulkanSetup.createTextureImage(&commandPool, models[0].TEXTURE_PATH);
+    // [TODO] move the following components inside the Model class
+    vulkanSetup.createTextureImage(&commandPool, boxes[0].getTexturePath());
     vulkanSetup.createTextureImageView();
     vulkanSetup.createTextureSampler();
 
-    vulkanSetup.createVertexBuffer(&commandPool, models[0].vertices);
-    vulkanSetup.createIndexBuffer(&commandPool, models[0].indices,
-                                  sizeof(models[0].indices[0]) *
-                                      models[0].indices.size());
+    vulkanSetup.createVertexBuffer(&commandPool, boxes[0].vertices);
+    vulkanSetup.createIndexBuffer(&commandPool, boxes[0].indices,
+                                  sizeof(boxes[0].indices[0]) *
+                                      boxes[0].indices.size());
     vulkanSetup.createUniformBuffers();
     vulkanSetup.createDescriptorPool();
     vulkanSetup.createDescriptorSets(&shader.descriptorSetLayout);
+    // end of [TODO]
+
     createCommandBuffers();
     createSyncObjects();
 }
@@ -74,10 +79,10 @@ void Render::drawFrame(Camera::Matrices& matrices) {
 
     updateUniformBuffer(currentFrame, matrices);
 
-    // update position of the models
-    // for (Model& model : models) {
-    //     model.setModelMatrix(glm::translate(model.getModelMatrix(),
-    //     glm::vec3(0.0f, 0.0001f, 0.0001f)));
+    // // update position of the models
+    // for (Box& box : boxes) {
+    //     box.setModelMatrix(glm::translate(box.getModelMatrix(),
+    //     glm::vec3(0.0f, 0.001f, 0.0001f)));
     // }
 
     // Only reset the fence if we are submitting work
@@ -249,11 +254,11 @@ void Render::recordCommandBuffer(VkCommandBuffer commandBuffer,
         0, 1, &vulkanSetup.descriptorSets[currentFrame], 0, nullptr);
 
     std::vector<glm::mat4> modelMatrices;
-    for (Model& model : models) {
+    for (Model& model : boxes) {
         modelMatrices.push_back(model.getModelMatrix());
     }
 
-    uint32_t indexCount = static_cast<uint32_t>(models[0].indices.size());
+    uint32_t indexCount = static_cast<uint32_t>(boxes[0].indices.size());
     uint32_t instanceCount = static_cast<uint32_t>(modelMatrices.size());
 
     for (const glm::mat4& modelMatrix : modelMatrices) {

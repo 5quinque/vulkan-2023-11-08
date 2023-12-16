@@ -9,7 +9,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-#include "Model.hpp"
 #include "Shader.hpp"
 #include "Vertex.hpp"
 #include "VulkanSetup.hpp"

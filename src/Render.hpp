@@ -5,7 +5,7 @@
 #include <vulkan/vulkan.h>
 
 #include "Camera.hpp"
-#include "Model.hpp"
+#include "Models/Box.hpp"
 #include "Shader.hpp"
 #include "VulkanSetup.hpp"
 
@@ -38,7 +38,7 @@ class Render {
     std::vector<VkSemaphore> imageAvailableSemaphores;
     std::vector<VkSemaphore> renderFinishedSemaphores;
 
-    std::vector<Model> models;
+    std::vector<Box> boxes;
 
     uint32_t currentFrame = 0;
 
