@@ -5,6 +5,7 @@
 #include <vulkan/vulkan.h>
 
 #include "Camera.hpp"
+#include "Model.hpp"
 #include "Shader.hpp"
 #include "VulkanSetup.hpp"
 
@@ -36,6 +37,8 @@ class Render {
     std::vector<VkFence> inFlightFences;
     std::vector<VkSemaphore> imageAvailableSemaphores;
     std::vector<VkSemaphore> renderFinishedSemaphores;
+
+    std::vector<Model> models;
 
     uint32_t currentFrame = 0;
 

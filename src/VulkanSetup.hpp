@@ -62,12 +62,6 @@ class VulkanSetup {
     const uint32_t WIDTH = 800;
     const uint32_t HEIGHT = 600;
 
-    const std::string MODEL_PATH = "models/cube.obj";
-    const std::string TEXTURE_PATH = "textures/the_metamorphosis.jpg";
-    std::vector<Vertex> vertices;
-    std::vector<uint32_t> indices;
-    std::unordered_map<Vertex, uint32_t> uniqueVertices{};
-
     VkDevice device;
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     VkSwapchainKHR swapChain;
@@ -109,8 +103,11 @@ class VulkanSetup {
     void createSwapChain();
     void createImageViews();
     void createFramebuffers();
-    void createVertexBuffer(VkCommandPool* commandPool);
-    void createIndexBuffer(VkCommandPool* commandPool);
+    void createVertexBuffer(VkCommandPool* commandPool,
+                            std::vector<Vertex> vertices);
+    void createIndexBuffer(VkCommandPool* commandPool,
+                           std::vector<uint32_t> indices,
+                           VkDeviceSize bufferSize);
     void createUniformBuffers();
     void createDescriptorPool();
     void createDescriptorSets(VkDescriptorSetLayout* descriptorSetLayoutPtr);
@@ -119,7 +116,8 @@ class VulkanSetup {
                       VkDeviceMemory& bufferMemory);
     void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size,
                     VkCommandPool* commandPool);
-    void createTextureImage(VkCommandPool* commandPoolPtr);
+    void createTextureImage(VkCommandPool* commandPoolPtr,
+                            std::string texturePath);
     void createImage(uint32_t width, uint32_t height, VkFormat format,
                      VkImageTiling tiling, VkImageUsageFlags usage,
                      VkMemoryPropertyFlags properties, VkImage& image,

@@ -3,9 +3,9 @@
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale
 
-#include <cstring>
+#include <cstring> // memcpy
 
 #include "Camera.hpp"
 #include "Render.hpp"
@@ -26,12 +26,23 @@ void Render::initVulkan() {
     createCommandPool();
     vulkanSetup.createDepthResources(&commandPool);
     vulkanSetup.createFramebuffers();
-    vulkanSetup.createTextureImage(&commandPool);
+
+    // this is not the correct place to load models
+    // create 10 models and add them to the vector
+    for (int i = 0; i < 10; i++) {
+        Model model(i);
+        model.loadModel();
+        models.push_back(model);
+    }
+
+    vulkanSetup.createTextureImage(&commandPool, models[0].TEXTURE_PATH);
     vulkanSetup.createTextureImageView();
     vulkanSetup.createTextureSampler();
-    vulkanSetup.loadModel();
-    vulkanSetup.createVertexBuffer(&commandPool);
-    vulkanSetup.createIndexBuffer(&commandPool);
+
+    vulkanSetup.createVertexBuffer(&commandPool, models[0].vertices);
+    vulkanSetup.createIndexBuffer(&commandPool, models[0].indices,
+                                  sizeof(models[0].indices[0]) *
+                                      models[0].indices.size());
     vulkanSetup.createUniformBuffers();
     vulkanSetup.createDescriptorPool();
     vulkanSetup.createDescriptorSets(&shader.descriptorSetLayout);
@@ -62,6 +73,12 @@ void Render::drawFrame(Camera::Matrices& matrices) {
     }
 
     updateUniformBuffer(currentFrame, matrices);
+
+    // update position of the models
+    // for (Model& model : models) {
+    //     model.setModelMatrix(glm::translate(model.getModelMatrix(),
+    //     glm::vec3(0.0f, 0.0001f, 0.0001f)));
+    // }
 
     // Only reset the fence if we are submitting work
     vkResetFences(vulkanSetup.device, 1, &inFlightFences[currentFrame]);
@@ -231,9 +248,20 @@ void Render::recordCommandBuffer(VkCommandBuffer commandBuffer,
         commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, shader.pipelineLayout,
         0, 1, &vulkanSetup.descriptorSets[currentFrame], 0, nullptr);
 
-    vkCmdDrawIndexed(commandBuffer,
-                     static_cast<uint32_t>(vulkanSetup.indices.size()), 1, 0, 0,
-                     0);
+    std::vector<glm::mat4> modelMatrices;
+    for (Model& model : models) {
+        modelMatrices.push_back(model.getModelMatrix());
+    }
+
+    uint32_t indexCount = static_cast<uint32_t>(models[0].indices.size());
+    uint32_t instanceCount = static_cast<uint32_t>(modelMatrices.size());
+
+    for (const glm::mat4& modelMatrix : modelMatrices) {
+        vkCmdPushConstants(commandBuffer, shader.pipelineLayout,
+                           VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4),
+                           &modelMatrix);
+        vkCmdDrawIndexed(commandBuffer, indexCount, instanceCount, 0, 0, 0);
+    }
 
     vkCmdEndRenderPass(commandBuffer);
 
