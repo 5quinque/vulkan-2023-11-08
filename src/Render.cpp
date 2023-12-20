@@ -5,9 +5,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale
 
+#include <chrono>  // std::chrono
 #include <cstring> // memcpy
 
-#include "Camera.hpp"
+#include "FPSCamera.hpp"
 #include "Models/Box.hpp"
 #include "Render.hpp"
 
@@ -29,10 +30,11 @@ void Render::initVulkan() {
     vulkanSetup.createFramebuffers();
 
     // this is not the correct place to load models
-    // create 10 models and add them to the vector
-    for (int i = 0; i < 10; i++) {
-        // Box box(glm::vec3(1.0f, 1.0f, 1.0f));
-        Box box;
+    // create 64 models and add them to the vector
+    for (int i = 0; i < 64; i++) {
+        Box box(glm::vec3(0.3f, 0.3f, 0.3f), false, true);
+        float mId = static_cast<float>(box.getModelId());
+
         box.loadModel();
         boxes.push_back(box);
     }
@@ -55,7 +57,7 @@ void Render::initVulkan() {
     createSyncObjects();
 }
 
-void Render::drawFrame(Camera::Matrices& matrices) {
+void Render::drawFrame(FPSCamera::Matrices& matrices) {
     // https://vulkan-tutorial.com/en/Drawing_a_triangle/Drawing/Rendering_and_presentation#page_Outline-of-a-frame
     // At a high level, rendering a frame in Vulkan consists of a common set of
     // steps:
@@ -78,12 +80,6 @@ void Render::drawFrame(Camera::Matrices& matrices) {
     }
 
     updateUniformBuffer(currentFrame, matrices);
-
-    // // update position of the models
-    // for (Box& box : boxes) {
-    //     box.setModelMatrix(glm::translate(box.getModelMatrix(),
-    //     glm::vec3(0.0f, 0.001f, 0.0001f)));
-    // }
 
     // Only reset the fence if we are submitting work
     vkResetFences(vulkanSetup.device, 1, &inFlightFences[currentFrame]);
@@ -139,14 +135,12 @@ void Render::drawFrame(Camera::Matrices& matrices) {
 }
 
 void Render::updateUniformBuffer(uint32_t currentImage,
-                                 Camera::Matrices& matrices) {
+                                 FPSCamera::Matrices& matrices) {
     UniformBufferObject ubo{};
 
-    // the model is rotated around the z-axis
-    ubo.model = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f),
-                            glm::vec3(0.0f, 0.0f, 1.0f));
+    ubo.model = glm::mat4(1.0f);
     ubo.view = matrices.view;
-    ubo.proj = matrices.perspective;
+    ubo.proj = matrices.projection;
 
     // Using a UBO this way is not the most efficient way to pass frequently
     // changing values to the shader. A more efficient way to pass a small
@@ -253,18 +247,18 @@ void Render::recordCommandBuffer(VkCommandBuffer commandBuffer,
         commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, shader.pipelineLayout,
         0, 1, &vulkanSetup.descriptorSets[currentFrame], 0, nullptr);
 
-    std::vector<glm::mat4> modelMatrices;
-    for (Model& model : boxes) {
-        modelMatrices.push_back(model.getModelMatrix());
+    std::vector<glm::mat4> boxMatrices;
+    for (Box& box : boxes) {
+        boxMatrices.push_back(box.getModelMatrix());
     }
 
     uint32_t indexCount = static_cast<uint32_t>(boxes[0].indices.size());
-    uint32_t instanceCount = static_cast<uint32_t>(modelMatrices.size());
+    uint32_t instanceCount = static_cast<uint32_t>(boxMatrices.size());
 
-    for (const glm::mat4& modelMatrix : modelMatrices) {
+    for (const glm::mat4& boxMatrix : boxMatrices) {
         vkCmdPushConstants(commandBuffer, shader.pipelineLayout,
                            VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4),
-                           &modelMatrix);
+                           &boxMatrix);
         vkCmdDrawIndexed(commandBuffer, indexCount, instanceCount, 0, 0, 0);
     }
 

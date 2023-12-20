@@ -24,6 +24,7 @@ test: dist/VulkanTest
 
 clean:
 	rm -f $(ODIR)/*.o
+	rm -rf $(ODIR)/Models/*.o
 	rm -f dist/VulkanTest
 
 shaders:

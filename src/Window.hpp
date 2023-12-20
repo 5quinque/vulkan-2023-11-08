@@ -2,16 +2,18 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Camera.hpp"
+#include "FPSCamera.hpp"
 
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
 
 class Window {
-    Camera& camera;
+    FPSCamera& camera;
+    float& timeDelta;
 
   public:
-    Window(Camera& camera) : camera(camera) {}
+    Window(FPSCamera& camera, float& timeDelta)
+        : camera(camera), timeDelta(timeDelta) {}
 
     bool framebufferResized = false;
 

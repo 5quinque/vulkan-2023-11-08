@@ -4,7 +4,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "Camera.hpp"
+#include "FPSCamera.hpp"
 #include "Models/Box.hpp"
 #include "Shader.hpp"
 #include "VulkanSetup.hpp"
@@ -28,8 +28,9 @@ class Render {
     void createSyncObjects();
     void createCommandBuffers();
 
-    void drawFrame(Camera::Matrices& matrices);
-    void updateUniformBuffer(uint32_t currentImage, Camera::Matrices& matrices);
+    void drawFrame(FPSCamera::Matrices& matrices);
+    void updateUniformBuffer(uint32_t currentImage,
+                             FPSCamera::Matrices& matrices);
     void cleanup();
 
   private:

@@ -3,6 +3,29 @@
 
 #include "Model.hpp"
 
+Model::Model(int modelId, glm::vec3 scale, bool createRigidBody,
+             bool matrixOffset)
+    : modelId(modelId), scale(scale) {
+    std::cout << "Model constructor" << std::endl;
+
+    if (matrixOffset) {
+        // x bitmask 48 (2^4 * 3)
+        // y bitmask 12 (2^2 * 3)
+        // z bitmask 3  (2^0 * 3)
+        float x = static_cast<float>((modelId >> 4) & 3);
+        float y = static_cast<float>((modelId >> 2) & 3);
+        float z = static_cast<float>(modelId & 3);
+
+        std::cout << "Creating " << modelId << " at x: " << x << ", y: " << y
+                  << ", z: " << z << std::endl;
+
+        // set position
+        setModelMatrix(glm::translate(model, glm::vec3(x, y, z)));
+    }
+
+    setModelMatrix(glm::scale(model, scale));
+}
+
 void Model::loadModel() {
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
@@ -40,7 +63,3 @@ void Model::loadModel() {
         }
     }
 }
-
-glm::mat4 Model::getModelMatrix() { return model; }
-
-void Model::setModelMatrix(glm::mat4 model) { this->model = model; }

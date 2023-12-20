@@ -16,7 +16,7 @@ void main() {
     // data using colors is the shader programming equivalent of printf 
     // debugging, for lack of a better option!
     // outColor = vec4(fragTexCoord, 0.0, 1.0);
-    // outColor = texture(texSampler, fragTexCoord);
+    outColor = texture(texSampler, fragTexCoord);
 
     // modify texture coordinates
     // outColor = texture(texSampler, fragTexCoord * 4.0);
@@ -25,9 +25,10 @@ void main() {
     // outColor = vec4(fragColor * texture(texSampler, fragTexCoord).rgb, 1.0);
 
     // pretty colours
-    vec3 color = vec3(fragTexCoord.x, fragTexCoord.y, 1.0);
+    // vec3 color = vec3(fragTexCoord.x, fragTexCoord.y, 1.0);
+    // vec3 color = vec3(fragTexCoord.x, fragTexCoord.y, 0.0);
     // outColor = vec4(color, 1.0);
 
-    vec4 texColor = texture(texSampler, fragTexCoord);
-    outColor = vec4(texColor.rgb * color, 1.0);
+    // vec4 texColor = texture(texSampler, fragTexCoord);
+    // outColor = vec4(texColor.rgb * color, 1.0);
 }

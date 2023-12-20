@@ -50,18 +50,19 @@ void Window::mouseCallback(GLFWwindow* window, double xpos, double ypos) {
             app->camera.mouse.lastY != 0.0f) {
             app->camera.mouse.firstMouse = false;
         }
+
         app->camera.mouse.lastX = xpos;
         app->camera.mouse.lastY = ypos;
     }
-
-    int32_t dx = xpos - app->camera.mouse.lastX;
-    int32_t dy = ypos - app->camera.mouse.lastY;
-
-    app->camera.rotate(glm::vec3(-dy * app->camera.rotationSpeed,
-                                 dx * app->camera.rotationSpeed, 0.0f));
+    app->camera.mouse.xoffset =
+        (xpos - app->camera.mouse.lastX) * app->camera.mouse.sensitivity;
+    app->camera.mouse.yoffset =
+        (ypos - app->camera.mouse.lastY) * app->camera.mouse.sensitivity;
 
     app->camera.mouse.lastX = xpos;
     app->camera.mouse.lastY = ypos;
+
+    app->camera.updateCameraDirection();
 }
 
 void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action,
@@ -90,22 +91,23 @@ void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action,
     // [TODO] cleanup key handling
     // w, a, s, d
     if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-        app->camera.keys.up = true;
+        app->camera.keys.forward = true;
     }
     if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
-        app->camera.keys.up = false;
+        app->camera.keys.forward = false;
     }
+    if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+        app->camera.keys.back = true;
+    }
+    if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
+        app->camera.keys.back = false;
+    }
+
     if (key == GLFW_KEY_A && action == GLFW_PRESS) {
         app->camera.keys.left = true;
     }
     if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
         app->camera.keys.left = false;
-    }
-    if (key == GLFW_KEY_S && action == GLFW_PRESS) {
-        app->camera.keys.down = true;
-    }
-    if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
-        app->camera.keys.down = false;
     }
     if (key == GLFW_KEY_D && action == GLFW_PRESS) {
         app->camera.keys.right = true;
@@ -120,7 +122,6 @@ void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action,
     if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_RELEASE) {
         app->camera.keys.shift = false;
     }
-
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
         app->camera.keys.space = true;
     }

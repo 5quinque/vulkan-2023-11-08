@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Camera.hpp"
+#include "FPSCamera.hpp"
 #include "Render.hpp"
 #include "Window.hpp"
 
@@ -8,7 +8,7 @@ class Application {
   public:
     Window window;
     Render render;
-    Camera camera;
+    FPSCamera camera;
 
     struct TickObject {
         float time;
@@ -17,7 +17,8 @@ class Application {
 
     float timeLast = 0.0f;
 
-    Application() : camera(), window(camera), render(window) {}
+    Application()
+        : camera(), window(camera, tickObject.timeDelta), render(window) {}
     void run();
 
   private:

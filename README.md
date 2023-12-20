@@ -154,3 +154,10 @@ https://en.cppreference.com/w/cpp/language/raii
 
 https://vkguide.dev/docs/chapter-3/push_constants/
 
+https://jsantell.com/model-view-projection/
+
+https://learnopengl.com/Getting-started/Camera
+
+# models
+
+https://opengameart.org/content/wooden-bridge-0
