@@ -3,10 +3,12 @@
 
 #include "Model.hpp"
 
+bool Model::loadedModel = false;
+
 Model::Model(int modelId, glm::vec3 scale, bool createRigidBody,
              bool matrixOffset)
     : modelId(modelId), scale(scale) {
-    std::cout << "Model constructor" << std::endl;
+    // std::cout << "Model constructor" << std::endl;
 
     if (matrixOffset) {
         // x bitmask 48 (2^4 * 3)
@@ -16,8 +18,8 @@ Model::Model(int modelId, glm::vec3 scale, bool createRigidBody,
         float y = static_cast<float>((modelId >> 2) & 3);
         float z = static_cast<float>(modelId & 3);
 
-        std::cout << "Creating " << modelId << " at x: " << x << ", y: " << y
-                  << ", z: " << z << std::endl;
+        // std::cout << "Creating " << modelId << " at x: " << x << ", y: " << y
+        //           << ", z: " << z << std::endl;
 
         // set position
         setModelMatrix(glm::translate(model, glm::vec3(x, y, z)));
@@ -27,6 +29,11 @@ Model::Model(int modelId, glm::vec3 scale, bool createRigidBody,
 }
 
 void Model::loadModel() {
+    if (loadedModel) {
+        return;
+    }
+    loadedModel = true;
+
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;

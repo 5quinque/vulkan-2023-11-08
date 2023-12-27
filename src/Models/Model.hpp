@@ -15,6 +15,7 @@ class Model {
     glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
 
   protected:
+    static bool loadedModel;
     std::string MODEL_PATH;
     std::string TEXTURE_PATH;
 
