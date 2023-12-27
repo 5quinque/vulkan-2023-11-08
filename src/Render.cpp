@@ -32,7 +32,10 @@ void Render::initVulkan() {
     // this is not the correct place to load models
     // create 64 models and add them to the vector
     for (int i = 0; i < 64; i++) {
-        Box box(glm::vec3(0.3f, 0.3f, 0.3f), false, true);
+        float x = static_cast<float>((i >> 4) & 3);
+        float y = static_cast<float>((i >> 2) & 3);
+        float z = static_cast<float>(i & 3);
+        Box box(glm::vec3(0.3f, 0.3f, 0.3f), false, true, glm::vec3(x, y, z));
         float mId = static_cast<float>(box.getModelId());
 
         box.loadModel();

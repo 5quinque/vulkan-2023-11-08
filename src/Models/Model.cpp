@@ -6,23 +6,40 @@
 bool Model::loadedModel = false;
 
 Model::Model(int modelId, glm::vec3 scale, bool createRigidBody,
-             bool matrixOffset)
+             bool matrixOffset, glm::vec3 position)
     : modelId(modelId), scale(scale) {
-    // std::cout << "Model constructor" << std::endl;
-
     if (matrixOffset) {
-        // x bitmask 48 (2^4 * 3)
-        // y bitmask 12 (2^2 * 3)
-        // z bitmask 3  (2^0 * 3)
-        float x = static_cast<float>((modelId >> 4) & 3);
-        float y = static_cast<float>((modelId >> 2) & 3);
-        float z = static_cast<float>(modelId & 3);
+        // If we use bit packing, the following explanation and function
+        // can be used to pack the coordinates into a single int
+        //
+        // Starting with 6 bits of information, we can store 2^6 = 64
+        // This isn't very large when each axis only gets 4 positive values,
+        // but it makes it easier to understand and scaling up follows the
+        // same logic
+        // x coord. 48 dec - 110000 bin : bitmask 2 bits (2^4 * 3)
+        // y coord. 12 dec - 001100 bin : bitmask 2 bits (2^2 * 3)
+        // z coord. 3  dec - 000011 bin : bitmask 2 bits (2^0 * 3)
 
-        // std::cout << "Creating " << modelId << " at x: " << x << ", y: " << y
-        //           << ", z: " << z << std::endl;
+        // a standard int has a minimum of 16 bits, so we can store 3
+        // coordinates in a single int using 5 bits for each
+        // float x = static_cast<float>((modelId >> 10) & 31);
+        // float y = static_cast<float>((modelId >> 5) & 31);
+        // float z = static_cast<float>(modelId & 31);
+        //
+        //
+        // int packCoordinates(int x, int y, int z) {
+        //     // Ensure x, y, z are within the range 0-31
+        //     assert(x >= 0 && x < 32);
+        //     assert(y >= 0 && y < 32);
+        //     assert(z >= 0 && z < 32);
+
+        //     // Shift x by 10 bits to the left, y by 5 bits and leave z as is
+        //     // Then combine them using bitwise OR
+        //     return (x << 10) | (y << 5) | z;
+        // }
 
         // set position
-        setModelMatrix(glm::translate(model, glm::vec3(x, y, z)));
+        setModelMatrix(glm::translate(model, position));
     }
 
     setModelMatrix(glm::scale(model, scale));

@@ -23,7 +23,8 @@ class Model {
 
   public:
     Model(int modelId, glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f),
-          bool createRigidBody = true, bool matrixOffset = false);
+          bool createRigidBody = true, bool matrixOffset = false,
+          glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f));
     std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
     std::unordered_map<Vertex, uint32_t> uniqueVertices{};
