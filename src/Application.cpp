@@ -18,9 +18,10 @@ void Application::mainLoop() {
     float height = render.vulkanSetup.swapChainExtent.height;
 
     // fov, aspect, znear, zfar
-    // znear is 0.3f because I like my near clipping plane to not
+    // znear is 0.1f because I like my near clipping plane to not
     // poke me in the face
-    camera.setPerspective(60.0f, (float)width / (float)height, 0.3f, 512.0f);
+    // [TODO] should this just be a default value set in the camera class?
+    camera.setPerspective(60.0f, (float)width / (float)height, 0.1f, 512.0f);
 
     // set camera movement speed
     // camera.setMovementSpeed(2.5f);

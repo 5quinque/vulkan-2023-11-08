@@ -3,8 +3,6 @@
 
 #include "Model.hpp"
 
-bool Model::loadedModel = false;
-
 Model::Model(int modelId, glm::vec3 scale, bool createRigidBody,
              bool matrixOffset, glm::vec3 position)
     : modelId(modelId), scale(scale) {
@@ -45,19 +43,13 @@ Model::Model(int modelId, glm::vec3 scale, bool createRigidBody,
     setModelMatrix(glm::scale(model, scale));
 }
 
-void Model::loadModel() {
-    if (loadedModel) {
-        return;
-    }
-    loadedModel = true;
-
+void Model::loadModel(std::string MODEL_PATH) {
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
     std::string warn, err;
 
-    std::cout << "Model::loadModel(), MODEL_PATH: " << this->MODEL_PATH
-              << std::endl;
+    std::cout << "Model::loadModel(), MODEL_PATH: " << MODEL_PATH << std::endl;
 
     if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err,
                           MODEL_PATH.c_str())) {

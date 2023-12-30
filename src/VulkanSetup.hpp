@@ -69,8 +69,6 @@ class VulkanSetup {
     VkExtent2D swapChainExtent;
     VkBuffer vertexBuffer;
     VkBuffer indexBuffer;
-    VkImageView textureImageView;
-    VkSampler textureSampler;
 
     VkQueue graphicsQueue;
     VkQueue presentQueue;
@@ -80,8 +78,19 @@ class VulkanSetup {
 
     std::vector<VkDescriptorSet> descriptorSets;
 
-    VkImage textureImage;
-    VkDeviceMemory textureImageMemory;
+    struct Image {
+        VkImage image;
+        VkDeviceMemory memory;
+        VkImageView view;
+    };
+
+    struct Texture {
+        Image image;
+        VkSampler sampler;
+    };
+
+    std::vector<Image> images;
+    std::vector<Texture> textures;
 
     VkImage depthImage;
     VkDeviceMemory depthImageMemory;
@@ -116,7 +125,10 @@ class VulkanSetup {
                       VkDeviceMemory& bufferMemory);
     void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size,
                     VkCommandPool* commandPool);
+    int createTexture(std::string texturePath, VkCommandPool* commandPoolPtr);
     void createTextureImage(VkCommandPool* commandPoolPtr,
+                            VkImage* textureImagePtr,
+                            VkDeviceMemory* textureImageMemoryPtr,
                             std::string texturePath);
     void createImage(uint32_t width, uint32_t height, VkFormat format,
                      VkImageTiling tiling, VkImageUsageFlags usage,
@@ -130,11 +142,11 @@ class VulkanSetup {
                                VkCommandPool* commandPoolPtr);
     void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width,
                            uint32_t height, VkCommandPool* commandPoolPtr);
-    void createTextureImageView();
-    void createTextureSampler();
+    void createTextureImageView(VkImage textureImage,
+                                VkImageView* textureImageViewPtr);
+    void createTextureSampler(VkSampler* textureSamplerPtr);
     void createDepthResources(VkCommandPool* commandPoolPtr);
     VkFormat findDepthFormat();
-    void loadModel();
 
   private:
     VkInstance instance;

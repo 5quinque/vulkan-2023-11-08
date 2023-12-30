@@ -62,6 +62,8 @@ Application
 
   `[ ]` Create a `Scene` class
 
+  `[ ]` Triple buffering
+
   `[ ]` All of the helper functions that submit commands so far have been set up to execute synchronously by
          waiting for the queue to become idle. For practical applications it is recommended to combine these
          operations in a single command buffer and execute them asynchronously for higher throughput, especially
@@ -75,6 +77,9 @@ Application
          to be called constantly. Eventually causing a crash:
          BadAccess (attempt to access private resource denied)
 
+  `[ ]` When having multiple instances of the `Box` model. The `loadModel` method only
+  needs to run once. (need to clean up, but kinda done)
+  https://old.reddit.com/r/vulkan/comments/e7n5b6/drawing_multiple_objects/fa3fn8f/
 
 
 # vulkan shader
@@ -156,7 +161,17 @@ https://vkguide.dev/docs/chapter-3/push_constants/
 
 https://jsantell.com/model-view-projection/
 
+https://johannesugb.github.io/gpu-programming/setting-up-a-proper-vulkan-projection-matrix/
+
 https://learnopengl.com/Getting-started/Camera
+
+https://www.youtube.com/watch?v=d4EgbgTm0Bg
+
+https://gafferongames.com/post/integration_basics/
+https://gafferongames.com/post/fix_your_timestep/
+https://gafferongames.com/
+
+https://lettier.github.io/3d-game-shaders-for-beginners/texturing.html
 
 # models
 

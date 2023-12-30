@@ -15,10 +15,6 @@ class Model {
     glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
 
   protected:
-    static bool loadedModel;
-    std::string MODEL_PATH;
-    std::string TEXTURE_PATH;
-
     glm::mat4 model = glm::mat4(1.0f);
 
   public:
@@ -29,7 +25,7 @@ class Model {
     std::vector<uint32_t> indices;
     std::unordered_map<Vertex, uint32_t> uniqueVertices{};
 
-    void loadModel();
+    void loadModel(std::string MODEL_PATH);
 
     int getModelId() { return modelId; }
 
@@ -42,4 +38,15 @@ class Model {
     // setModelMatrix(glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f,
     // 0.0f, 1.0f)));
     void setModelMatrix(glm::mat4 model) { this->model = model; }
+
+    virtual std::string getTexturePath() { return ""; }
+    virtual int getModelCount() { return 0; }
+    virtual int getTextureId() { return -1; }
+    virtual void setTextureId(int id) {}
+
+    virtual int getVertexOffset() { return -1; }
+    virtual void setVertexOffset(int offset) {}
+
+    virtual int getIndexOffset() { return -1; }
+    virtual void setIndexOffset(int offset) {}
 };

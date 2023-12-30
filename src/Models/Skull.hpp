@@ -5,33 +5,34 @@
 
 #include "Model.hpp"
 
-class Box : public Model {
-  private:
-    /// Total number of boxes created
-    static int totalNbBoxes;
+class Skull : public Model {
+  protected:
+    static bool loadedModel;
     static int textureId;
     std::string MODEL_PATH;
     std::string TEXTURE_PATH;
+
+  private:
+    static int totalNbSkulls;
     static int vertexOffset;
     static int indexOffset;
 
   public:
-    static bool loadedModel;
-    Box(glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f),
-        bool createRigidBody = true, bool matrixOffset = false,
-        glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f));
+    Skull(glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f),
+          bool createRigidBody = true, bool matrixOffset = false,
+          glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f));
 
     void loadModel();
 
     std::string getTexturePath() { return TEXTURE_PATH; }
 
-    int getModelCount() { return totalNbBoxes; }
+    int getModelCount() { return totalNbSkulls; }
     int getTextureId() {
-        // std::cout << "box getTextureId: " << textureId << std::endl;
+        // std::cout << "bridge getTextureId: " << textureId << std::endl;
         return textureId;
     }
     void setTextureId(int id) {
-        // std::cout << "box setTextureId: " << id << std::endl;
+        // std::cout << "bridge setTextureId: " << id << std::endl;
         textureId = id;
     }
     int getVertexOffset() { return vertexOffset; }

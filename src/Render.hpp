@@ -1,11 +1,12 @@
 #pragma once
 
+#include <memory> // std::shared_ptr
 #include <vector> // std::vector
 
 #include <vulkan/vulkan.h>
 
 #include "FPSCamera.hpp"
-#include "Models/Box.hpp"
+#include "Models/Model.hpp"
 #include "Shader.hpp"
 #include "VulkanSetup.hpp"
 
@@ -31,6 +32,8 @@ class Render {
     void drawFrame(FPSCamera::Matrices& matrices);
     void updateUniformBuffer(uint32_t currentImage,
                              FPSCamera::Matrices& matrices);
+    void createScene(std::vector<Vertex>& vertices,
+                     std::vector<uint32_t>& indices);
     void cleanup();
 
   private:
@@ -39,7 +42,7 @@ class Render {
     std::vector<VkSemaphore> imageAvailableSemaphores;
     std::vector<VkSemaphore> renderFinishedSemaphores;
 
-    std::vector<Box> boxes;
+    std::vector<std::shared_ptr<Model>> objects;
 
     uint32_t currentFrame = 0;
 
