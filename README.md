@@ -1,10 +1,25 @@
+# Vulkan test
+
+![screenshot](Screenshot_20231230_113743.png "x")
+
+controls
+
+```
+  w
+a s d
+
+LSHIFT
+
+SPACE
+```
 
 ## compile
 
 ```bash
+make shaders
+
 make && make test
 
-make shaders
 # make clean_shaders
 ```
 
