@@ -41,6 +41,33 @@ Model::Model(int modelId, glm::vec3 scale, bool createRigidBody,
     }
 
     setModelMatrix(glm::scale(model, scale));
+
+    // Create the collision shape for the rigid body (box shape)
+    // ReactPhysics3D will clone this object to create an internal one.
+    // Therefore,
+    // it is OK if this object is destroyed right after calling
+    // RigidBody::addCollisionShape()
+    // mBoxShape = mPhysicsCommon.createBoxShape(rp3d::Vector3(mSize[0],
+    // mSize[1], mSize[2]));
+
+    // mPreviousTransform = rp3d::Transform::identity();
+
+    // if (createRigidBody) {
+
+    //     // Create a rigid body in the physics world
+    //     rp3d::RigidBody* body = world->createRigidBody(mPreviousTransform);
+    //     mCollider = body->addCollider(mBoxShape,
+    //     rp3d::Transform::identity());
+    //     body->updateMassPropertiesFromColliders();
+    //     mBody = body;
+    // }
+    // else {
+
+    //     // Create a body in the physics world
+    //     mBody = world->createCollisionBody(mPreviousTransform);
+    //     mCollider = mBody->addCollider(mBoxShape,
+    //     rp3d::Transform::identity());
+    // }
 }
 
 void Model::loadModel(std::string MODEL_PATH) {

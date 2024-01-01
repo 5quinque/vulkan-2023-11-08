@@ -21,6 +21,9 @@ class Model {
     Model(int modelId, glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f),
           bool createRigidBody = true, bool matrixOffset = false,
           glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f));
+
+    glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+
     std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
     std::unordered_map<Vertex, uint32_t> uniqueVertices{};
@@ -37,7 +40,10 @@ class Model {
     glm::mat4 getModelMatrix() { return model; }
     // setModelMatrix(glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f,
     // 0.0f, 1.0f)));
-    void setModelMatrix(glm::mat4 model) { this->model = model; }
+    void setModelMatrix(glm::mat4 model) {
+        this->model = model;
+        this->position = glm::vec3(model[3][0], model[3][1], model[3][2]);
+    }
 
     virtual std::string getTexturePath() { return ""; }
     virtual int getModelCount() { return 0; }

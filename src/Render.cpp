@@ -8,6 +8,8 @@
 #include <chrono>  // std::chrono
 #include <cstring> // memcpy
 
+#include <reactphysics3d/reactphysics3d.h>
+
 #include "FPSCamera.hpp"
 #include "Models/Box.hpp"
 #include "Models/Bridge.hpp"
@@ -45,8 +47,9 @@ void Render::createScene(std::vector<Vertex>& vertices,
 
     // create 64 models and add them to the vector
     for (int i = 0; i < 64; i++) {
-        float x = static_cast<float>((i >> 4) & 3) - 3; // move it left 5 units
-        float y = static_cast<float>((i >> 2) & 3);
+        float x = static_cast<float>((i >> 4) & 3) - 3 +
+                  (0.05 * i); // move it left 5 units
+        float y = static_cast<float>((i >> 2) & 3) + 5;
         float z = static_cast<float>(i & 3) - 10; // move it back 5 units
         Box box(glm::vec3(0.3f, 0.3f, 0.3f), false, true, glm::vec3(x, y, z));
         // if (!box.loadedModel) {
@@ -144,7 +147,6 @@ void Render::initVulkan() {
 
     std::vector<Vertex> modelVertices;
     std::vector<uint32_t> modelIndices;
-
     createScene(modelVertices, modelIndices);
 
     vulkanSetup.createVertexBuffer(&commandPool, modelVertices);

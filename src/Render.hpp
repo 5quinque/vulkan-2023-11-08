@@ -3,6 +3,7 @@
 #include <memory> // std::shared_ptr
 #include <vector> // std::vector
 
+#include <reactphysics3d/reactphysics3d.h>
 #include <vulkan/vulkan.h>
 
 #include "FPSCamera.hpp"
@@ -18,6 +19,11 @@ class Render {
     VulkanSetup vulkanSetup;
     Shader shader;
     VkCommandPool commandPool;
+
+    std::vector<std::shared_ptr<Model>> objects;
+
+    rp3d::PhysicsCommon physicsCommon;
+    rp3d::PhysicsWorld* world = physicsCommon.createPhysicsWorld();
 
     Render(Window& window)
         : window(window), vulkanSetup(window, &renderPass),
@@ -41,8 +47,6 @@ class Render {
     std::vector<VkFence> inFlightFences;
     std::vector<VkSemaphore> imageAvailableSemaphores;
     std::vector<VkSemaphore> renderFinishedSemaphores;
-
-    std::vector<std::shared_ptr<Model>> objects;
 
     uint32_t currentFrame = 0;
 
