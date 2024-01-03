@@ -101,6 +101,8 @@ Application
   needs to run once. (need to clean up, but kinda done)
   https://old.reddit.com/r/vulkan/comments/e7n5b6/drawing_multiple_objects/fa3fn8f/
 
+  `[ ]` cmake
+
 
 # vulkan shader
 

@@ -1,10 +1,13 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 
+#include <reactphysics3d/reactphysics3d.h>
+
 #include "Model.hpp"
 
-Model::Model(int modelId, glm::vec3 scale, bool createRigidBody,
-             bool matrixOffset, glm::vec3 position)
+Model::Model(int modelId, glm::vec3 scale, bool matrixOffset,
+             glm::vec3 position, bool createRigidBody, rp3d::BodyType bodyType,
+             rp3d::PhysicsWorld* world, rp3d::PhysicsCommon* physicsCommon)
     : modelId(modelId), scale(scale) {
     if (matrixOffset) {
         // If we use bit packing, the following explanation and function
@@ -42,32 +45,24 @@ Model::Model(int modelId, glm::vec3 scale, bool createRigidBody,
 
     setModelMatrix(glm::scale(model, scale));
 
-    // Create the collision shape for the rigid body (box shape)
-    // ReactPhysics3D will clone this object to create an internal one.
-    // Therefore,
-    // it is OK if this object is destroyed right after calling
-    // RigidBody::addCollisionShape()
-    // mBoxShape = mPhysicsCommon.createBoxShape(rp3d::Vector3(mSize[0],
-    // mSize[1], mSize[2]));
+    if (createRigidBody) {
+        // Create a rigid body in the world
+        rp3d::Vector3 r3position(position.x, position.y, position.z);
+        rp3d::Quaternion orientation = rp3d::Quaternion::identity();
+        rp3d::Transform transform(r3position, orientation);
+        physicsBody = world->createRigidBody(transform);
 
-    // mPreviousTransform = rp3d::Transform::identity();
+        physicsBody->setType(bodyType);
 
-    // if (createRigidBody) {
+        // [TODO] Set the mass
+        // physicsBody->setMass(rp3d::decimal(0.0));
 
-    //     // Create a rigid body in the physics world
-    //     rp3d::RigidBody* body = world->createRigidBody(mPreviousTransform);
-    //     mCollider = body->addCollider(mBoxShape,
-    //     rp3d::Transform::identity());
-    //     body->updateMassPropertiesFromColliders();
-    //     mBody = body;
-    // }
-    // else {
-
-    //     // Create a body in the physics world
-    //     mBody = world->createCollisionBody(mPreviousTransform);
-    //     mCollider = mBody->addCollider(mBoxShape,
-    //     rp3d::Transform::identity());
-    // }
+        rp3d::Vector3 halfExtents(scale.x, scale.y, scale.z);
+        rp3d::BoxShape* boxShape = physicsCommon->createBoxShape(halfExtents);
+        rp3d::Collider* boxCollider =
+            physicsBody->addCollider(boxShape, rp3d::Transform::identity());
+        physicsBody->updateMassPropertiesFromColliders();
+    }
 }
 
 void Model::loadModel(std::string MODEL_PATH) {

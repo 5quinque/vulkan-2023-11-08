@@ -34,72 +34,6 @@ void Application::mainLoop() {
     // camera.setCameraPos(glm::vec3(0.0f, 0.0f, 3.0f));
     // camera.setCameraDirection(glm::vec3(0.0f, 0.0f, -1.0f));
 
-    // create the floor
-    rp3d::Vector3 floorPosition(render.objects[0]->position.x,
-                                render.objects[0]->position.y,
-                                render.objects[0]->position.z);
-    rp3d::Quaternion floorOrientation = rp3d::Quaternion::identity();
-    rp3d::Transform floorTransform(floorPosition, floorOrientation);
-    // rp3d::CollisionBody* floorBody =
-    // render.world->createCollisionBody(floorTransform);
-    rp3d::RigidBody* floorBody =
-        render.world->createRigidBody(floorTransform); // Change this line
-
-    // Set the mass of the floor to zero to make it static
-    // floorBody->setMass(rp3d::decimal(0.0));
-    floorBody->setType(rp3d::BodyType::STATIC);
-
-    const rp3d::Vector3 floorHalfExtents(50, 0.10, 50);
-    // rp3d::BoxShape* floorShape =
-    // render.physicsCommon.createBoxShape(rp3d::Vector3(25.0, 1.50, 25.0));
-    rp3d::BoxShape* floorShape =
-        render.physicsCommon.createBoxShape(floorHalfExtents);
-    rp3d::Collider* floorCollider =
-        floorBody->addCollider(floorShape, rp3d::Transform::identity());
-
-    // floorBody->updateMassPropertiesFromColliders();
-
-    std::vector<rp3d::RigidBody*> bodies;
-    std::map<rp3d::RigidBody*, std::shared_ptr<Model>> bodyMap;
-
-    // std::map<rp3d::RigidBody*, glm::vec3> rotationDeltaMap;
-
-    // Add the rigid body to the array of bodies
-    bodies.push_back(floorBody);
-    // Add the rigid body and the corresponding model to the map
-    bodyMap[floorBody] = render.objects[0];
-
-    // int i = 4;
-    for (int i = 1; i < render.objects.size(); i++) {
-        // Create a rigid body in the world
-        rp3d::Vector3 position(render.objects[i]->position.x,
-                               render.objects[i]->position.y,
-                               render.objects[i]->position.z);
-        rp3d::Quaternion orientation = rp3d::Quaternion::identity();
-        rp3d::Transform transform(position, orientation);
-        rp3d::RigidBody* body = render.world->createRigidBody(transform);
-
-        glm::mat4 modelMatrix = render.objects[i]->getModelMatrix();
-
-        // get current object scale from the current model matrix
-        glm::vec3 scale =
-            glm::vec3(glm::length(modelMatrix[0]), glm::length(modelMatrix[1]),
-                      glm::length(modelMatrix[2]));
-
-        rp3d::Vector3 halfExtents(scale.x, scale.y, scale.z);
-        rp3d::BoxShape* boxShape =
-            render.physicsCommon.createBoxShape(halfExtents);
-        rp3d::Collider* boxCollider =
-            body->addCollider(boxShape, rp3d::Transform::identity());
-        body->updateMassPropertiesFromColliders();
-
-        // Add the rigid body to the array of bodies
-        bodies.push_back(body);
-
-        // Add the rigid body and the corresponding model to the map
-        bodyMap[body] = render.objects[i];
-    }
-
     // Constant physics time step
     const float timeStep = 1.0f / 60.0f;
     float accumulator = 0.0f;
@@ -122,8 +56,11 @@ void Application::mainLoop() {
 
             // For each body in the world
             // Get the updated position of the body
-            for (rp3d::RigidBody* body : bodies) {
-                glm::mat4 currentModelMatrix = bodyMap[body]->getModelMatrix();
+            for (int i = 0; i < render.objects.size(); i++) {
+                // [TODO] move all this to a function in the Model class
+                glm::mat4 currentModelMatrix =
+                    render.objects[i]->getModelMatrix();
+                rp3d::RigidBody* body = render.objects[i]->physicsBody;
 
                 const rp3d::Transform& transform = body->getTransform();
                 const rp3d::Vector3& position = transform.getPosition();
@@ -153,21 +90,8 @@ void Application::mainLoop() {
                               rotationMatrix[2], currentModelMatrix[3]),
                     scale);
 
-                bodyMap[body]->setModelMatrix(currentModelMatrix);
+                render.objects[i]->setModelMatrix(currentModelMatrix);
             }
-
-            // for(int i = 1; i < render.objects.size(); i++) {
-            //     render.objects[i]->setModelMatrix(glm::translate(glm::mat4(1.0f),
-            //     glm::vec3(position.x, position.y, position.z)));
-            //     // std::cout << "Model Position: (" <<
-            //     render.objects[i]->position.x << ", " <<
-            //     // render.objects[i]->position.y << ", " <<
-            //     render.objects[i]->position.z << ")" << std::endl;
-            // }
-
-            // // Display the position of the body
-            // std::cout << "Body Position: (" << position.x << ", " <<
-            // position.y << ", " << position.z << ")" << std::endl;
 
             // Decrease the accumulated time
             accumulator -= timeStep;

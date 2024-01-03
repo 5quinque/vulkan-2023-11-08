@@ -8,6 +8,8 @@
 
 #include <glm/glm.hpp> // glm::mat4
 
+#include <reactphysics3d/reactphysics3d.h>
+
 #include "../Vertex.hpp"
 
 class Model {
@@ -19,14 +21,20 @@ class Model {
 
   public:
     Model(int modelId, glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f),
-          bool createRigidBody = true, bool matrixOffset = false,
-          glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f));
+          bool matrixOffset = false,
+          glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f),
+          bool createRigidBody = true,
+          rp3d::BodyType bodyType = rp3d::BodyType::DYNAMIC,
+          rp3d::PhysicsWorld* world = nullptr,
+          rp3d::PhysicsCommon* physicsCommon = nullptr);
 
     glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
 
     std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
     std::unordered_map<Vertex, uint32_t> uniqueVertices{};
+
+    rp3d::RigidBody* physicsBody = nullptr;
 
     void loadModel(std::string MODEL_PATH);
 

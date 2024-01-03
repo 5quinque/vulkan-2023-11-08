@@ -7,8 +7,6 @@
 int main() {
     Application app;
 
-    std::cout << "Hello, Triangle!" << std::endl;
-
     try {
         app.run();
     } catch (const std::exception& e) {

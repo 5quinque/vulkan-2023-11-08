@@ -5,7 +5,7 @@
 
 #include "Model.hpp"
 
-class Commodore : public Model {
+class House : public Model {
   protected:
     static bool loadedModel;
     static int textureId;
@@ -13,24 +13,24 @@ class Commodore : public Model {
     std::string TEXTURE_PATH;
 
   private:
-    static int totalNbCommodores;
+    static int totalNbHouses;
     static int vertexOffset;
     static int indexOffset;
 
   public:
-    Commodore(glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f),
-              bool matrixOffset = false,
-              glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f),
-              bool createRigidBody = true,
-              rp3d::BodyType bodyType = rp3d::BodyType::DYNAMIC,
-              rp3d::PhysicsWorld* world = nullptr,
-              rp3d::PhysicsCommon* physicsCommon = nullptr);
+    House(glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f),
+          bool matrixOffset = false,
+          glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f),
+          bool createRigidBody = true,
+          rp3d::BodyType bodyType = rp3d::BodyType::DYNAMIC,
+          rp3d::PhysicsWorld* world = nullptr,
+          rp3d::PhysicsCommon* physicsCommon = nullptr);
 
     void loadModel();
 
     std::string getTexturePath() { return TEXTURE_PATH; }
 
-    int getModelCount() { return totalNbCommodores; }
+    int getModelCount() { return totalNbHouses; }
     int getTextureId() {
         // std::cout << "bridge getTextureId: " << textureId << std::endl;
         return textureId;

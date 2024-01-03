@@ -8,7 +8,15 @@ CFLAGS = -std=c++17 -O3 $(DEBUG_FLAGS) -I$(LOCAL_INCLUDE_PATH) -DTRACY_ENABLE
 LDFLAGS = -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi -lreactphysics3d
 
 ODIR = build/objs
-_OBJS = Models/Commodore.o Models/Hatchet.o Models/Skull.o Models/Bridge.o Models/Box.o Models/Model.o Shader.o Render.o Vertex.o Window.o VulkanSetup.o Application.o main.o
+_OBJS = \
+	Models/Commodore.o \
+	Models/House.o \
+	Models/Hatchet.o \
+	Models/Skull.o \
+	Models/Bridge.o \
+	Models/Box.o \
+	Models/Model.o \
+	Shader.o Render.o Vertex.o Window.o VulkanSetup.o Application.o main.o
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 
 $(ODIR)/%.o: src/%.cpp

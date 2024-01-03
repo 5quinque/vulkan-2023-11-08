@@ -13,23 +13,29 @@
 #include "Models/Bridge.hpp"
 #include "Models/Commodore.hpp"
 #include "Models/Hatchet.hpp"
+#include "Models/House.hpp"
 #include "Models/Skull.hpp"
 #include "Render.hpp"
 
 void Render::createScene(std::vector<Vertex>& vertices,
                          std::vector<uint32_t>& indices) {
-    // Box box(glm::vec3(0.3f, 0.3f, 0.3f), false, true, glm::vec3(0.0f, 0.0f,
-    // 0.0f));
-    Bridge bridge(glm::vec3(1.0f, 1.0f, 1.0f), false, true,
-                  glm::vec3(-5.0f, 0.0f, 0.0f));
-    Hatchet hatchet(glm::vec3(0.02f, 0.02f, 0.02f), false, true,
-                    glm::vec3(-2.0f, 0.0f, 0.0f));
-    Commodore commodore(glm::vec3(1.0f, 1.0f, 1.0f), false, true,
-                        glm::vec3(-3.0f, 0.0f, 0.0f));
-    Skull skull(glm::vec3(1.0f, 1.0f, 1.0f), false, true,
-                glm::vec3(3.2f, 0.85f, -2.5f));
-    Box floor(glm::vec3(50.0f, 0.1f, 50.0f), false, true,
-              glm::vec3(0.0f, -1.0f, 0.0f));
+    Bridge bridge(glm::vec3(1.0f, 1.0f, 1.0f), true,
+                  glm::vec3(-5.0f, 0.0f, 0.0f), true, rp3d::BodyType::STATIC,
+                  world, &physicsCommon);
+    Hatchet hatchet(glm::vec3(0.02f, 0.02f, 0.02f), true,
+                    glm::vec3(-2.0f, 0.0f, 0.0f), true, rp3d::BodyType::DYNAMIC,
+                    world, &physicsCommon);
+    Commodore commodore(glm::vec3(1.0f, 1.0f, 1.0f), true,
+                        glm::vec3(-3.0f, 0.0f, 0.0f), true,
+                        rp3d::BodyType::DYNAMIC, world, &physicsCommon);
+    Skull skull(glm::vec3(1.0f, 1.0f, 1.0f), true,
+                glm::vec3(3.2f, 0.85f, -2.5f), true, rp3d::BodyType::DYNAMIC,
+                world, &physicsCommon);
+    House house(glm::vec3(3.0f, 2.0f, 3.0f), true,
+                glm::vec3(-2.0f, 0.0f, -15.0f), true, rp3d::BodyType::STATIC,
+                world, &physicsCommon);
+    Box floor(glm::vec3(50.0f, 0.1f, 50.0f), true, glm::vec3(0.0f, -1.0f, 0.0f),
+              true, rp3d::BodyType::STATIC, world, &physicsCommon);
 
     floor.loadModel();
     objects.push_back(std::make_shared<Box>(floor));
@@ -40,39 +46,21 @@ void Render::createScene(std::vector<Vertex>& vertices,
                     floor.vertices.end());
     indices.insert(indices.end(), floor.indices.begin(), floor.indices.end());
     std::cout << "floor vertices.size(): " << vertices.size() << std::endl;
+    // load textures in the model class?
     floor.setTextureId(
         vulkanSetup.createTexture(floor.getTexturePath(), &commandPool));
 
+    Box bigBox(glm::vec3(1.0f, 1.0f, 1.0f), true, glm::vec3(0.0f, 0.0f, -4.0f),
+               true, rp3d::BodyType::DYNAMIC, world, &physicsCommon);
+    objects.push_back(std::make_shared<Box>(bigBox));
+
     // create 64 models and add them to the vector
     for (int i = 0; i < 64; i++) {
-        float x = static_cast<float>((i >> 4) & 3) - 3 +
-                  (0.05 * i); // move it left 5 units
-        float y = static_cast<float>((i >> 2) & 3) + 0.05 * i;
-        float z = static_cast<float>(i & 3) - 10; // move it back 5 units
-        Box box(glm::vec3(0.3f, 0.3f, 0.3f), false, true, glm::vec3(x, y, z));
-        // if (!box.loadedModel) {
-        //     // load textures in the model class?
-        //     std::cout << "Box class hasn't loaded model yet" << std::endl;
-        //     box.setTextureId(
-        //         vulkanSetup.createTexture(box.getTexturePath(), &commandPool)
-        //     );
-        // }
-        // box.loadModel();
-
-        // if (i == 0) {
-        //     box.setVertexOffset(vertices.size());
-        //     box.setIndexOffset(indices.size());
-        //     // add vertices and indices from each model to the vectors
-        //     vertices.insert(vertices.end(), box.vertices.begin(),
-        //                         box.vertices.end());
-        //     indices.insert(indices.end(), box.indices.begin(),
-        //                         box.indices.end());
-        //     std::cout << "box vertices.size(): " << vertices.size() <<
-        //     std::endl;
-        //     box.setTextureId(vulkanSetup.createTexture(box.getTexturePath(),
-        //     &commandPool));
-        // }
-
+        float x = static_cast<float>((i >> 4) & 3) - 2; // move it left 5 units
+        float y = static_cast<float>((i >> 2) & 3) + 4;
+        float z = static_cast<float>(i & 3) - 5; // move it back 5 units
+        Box box(glm::vec3(0.2f, 0.2f, 0.2f), true, glm::vec3(x, y, z), true,
+                rp3d::BodyType::DYNAMIC, world, &physicsCommon);
         objects.push_back(std::make_shared<Box>(box));
     }
 
@@ -87,6 +75,9 @@ void Render::createScene(std::vector<Vertex>& vertices,
 
     skull.loadModel();
     objects.push_back(std::make_shared<Skull>(skull));
+
+    house.loadModel();
+    objects.push_back(std::make_shared<House>(house));
 
     bridge.setVertexOffset(vertices.size());
     bridge.setIndexOffset(indices.size());
@@ -124,7 +115,20 @@ void Render::createScene(std::vector<Vertex>& vertices,
     std::cout << "skull vertices.size(): " << vertices.size() << std::endl;
     skull.setTextureId(
         vulkanSetup.createTexture(skull.getTexturePath(), &commandPool));
+
+    house.setVertexOffset(vertices.size());
+    house.setIndexOffset(indices.size());
+    vertices.insert(vertices.end(), house.vertices.begin(),
+                    house.vertices.end());
+    indices.insert(indices.end(), house.indices.begin(), house.indices.end());
+    std::cout << "house vertices.size(): " << vertices.size() << std::endl;
+    house.setTextureId(
+        vulkanSetup.createTexture(house.getTexturePath(), &commandPool));
 }
+
+// void Render::loadModel() {
+
+// }
 
 void Render::initVulkan() {
     std::cout << "Render::initVulkan()" << std::endl;
