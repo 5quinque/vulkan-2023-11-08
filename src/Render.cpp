@@ -8,16 +8,28 @@
 #include <chrono>  // std::chrono
 #include <cstring> // memcpy
 
-#include <reactphysics3d/reactphysics3d.h>
-
 #include "FPSCamera.hpp"
 #include "Models/Box.hpp"
+#include "Models/Bridge.hpp"
+#include "Models/Commodore.hpp"
+#include "Models/Hatchet.hpp"
+#include "Models/Skull.hpp"
 #include "Render.hpp"
 
 void Render::createScene(std::vector<Vertex>& vertices,
                          std::vector<uint32_t>& indices) {
+    // Box box(glm::vec3(0.3f, 0.3f, 0.3f), false, true, glm::vec3(0.0f, 0.0f,
+    // 0.0f));
+    Bridge bridge(glm::vec3(1.0f, 1.0f, 1.0f), false, true,
+                  glm::vec3(-5.0f, 0.0f, 0.0f));
+    Hatchet hatchet(glm::vec3(0.02f, 0.02f, 0.02f), false, true,
+                    glm::vec3(-2.0f, 0.0f, 0.0f));
+    Commodore commodore(glm::vec3(1.0f, 1.0f, 1.0f), false, true,
+                        glm::vec3(-3.0f, 0.0f, 0.0f));
+    Skull skull(glm::vec3(1.0f, 1.0f, 1.0f), false, true,
+                glm::vec3(3.2f, 0.85f, -2.5f));
     Box floor(glm::vec3(50.0f, 0.1f, 50.0f), false, true,
-              glm::vec3(0.0f, -0.1f, 0.0f));
+              glm::vec3(0.0f, -1.0f, 0.0f));
 
     floor.loadModel();
     objects.push_back(std::make_shared<Box>(floor));
@@ -31,15 +43,87 @@ void Render::createScene(std::vector<Vertex>& vertices,
     floor.setTextureId(
         vulkanSetup.createTexture(floor.getTexturePath(), &commandPool));
 
-    Box box(glm::vec3(0.5f, 0.5f, 0.5f), false, true, glm::vec3(-1.0, 0, 0.5));
-    objects.push_back(std::make_shared<Box>(box));
+    // create 64 models and add them to the vector
+    for (int i = 0; i < 64; i++) {
+        float x = static_cast<float>((i >> 4) & 3) - 3 +
+                  (0.05 * i); // move it left 5 units
+        float y = static_cast<float>((i >> 2) & 3) + 0.05 * i;
+        float z = static_cast<float>(i & 3) - 10; // move it back 5 units
+        Box box(glm::vec3(0.3f, 0.3f, 0.3f), false, true, glm::vec3(x, y, z));
+        // if (!box.loadedModel) {
+        //     // load textures in the model class?
+        //     std::cout << "Box class hasn't loaded model yet" << std::endl;
+        //     box.setTextureId(
+        //         vulkanSetup.createTexture(box.getTexturePath(), &commandPool)
+        //     );
+        // }
+        // box.loadModel();
 
-    Box box2(glm::vec3(0.5f, 0.5f, 0.5f), false, true,
-             glm::vec3(-0.2, 2.1, 0.5));
-    objects.push_back(std::make_shared<Box>(box2));
+        // if (i == 0) {
+        //     box.setVertexOffset(vertices.size());
+        //     box.setIndexOffset(indices.size());
+        //     // add vertices and indices from each model to the vectors
+        //     vertices.insert(vertices.end(), box.vertices.begin(),
+        //                         box.vertices.end());
+        //     indices.insert(indices.end(), box.indices.begin(),
+        //                         box.indices.end());
+        //     std::cout << "box vertices.size(): " << vertices.size() <<
+        //     std::endl;
+        //     box.setTextureId(vulkanSetup.createTexture(box.getTexturePath(),
+        //     &commandPool));
+        // }
 
-    Box box3(glm::vec3(0.5f, 0.5f, 0.5f), false, true, glm::vec3(1.0, 0, 0.5));
-    objects.push_back(std::make_shared<Box>(box3));
+        objects.push_back(std::make_shared<Box>(box));
+    }
+
+    bridge.loadModel();
+    objects.push_back(std::make_shared<Bridge>(bridge));
+
+    hatchet.loadModel();
+    objects.push_back(std::make_shared<Hatchet>(hatchet));
+
+    commodore.loadModel();
+    objects.push_back(std::make_shared<Commodore>(commodore));
+
+    skull.loadModel();
+    objects.push_back(std::make_shared<Skull>(skull));
+
+    bridge.setVertexOffset(vertices.size());
+    bridge.setIndexOffset(indices.size());
+    vertices.insert(vertices.end(), bridge.vertices.begin(),
+                    bridge.vertices.end());
+    indices.insert(indices.end(), bridge.indices.begin(), bridge.indices.end());
+    bridge.setTextureId(
+        vulkanSetup.createTexture(bridge.getTexturePath(), &commandPool));
+
+    hatchet.setVertexOffset(vertices.size());
+    hatchet.setIndexOffset(indices.size());
+    vertices.insert(vertices.end(), hatchet.vertices.begin(),
+                    hatchet.vertices.end());
+    indices.insert(indices.end(), hatchet.indices.begin(),
+                   hatchet.indices.end());
+    std::cout << "hatchet vertices.size(): " << vertices.size() << std::endl;
+    hatchet.setTextureId(
+        vulkanSetup.createTexture(hatchet.getTexturePath(), &commandPool));
+
+    commodore.setVertexOffset(vertices.size());
+    commodore.setIndexOffset(indices.size());
+    vertices.insert(vertices.end(), commodore.vertices.begin(),
+                    commodore.vertices.end());
+    indices.insert(indices.end(), commodore.indices.begin(),
+                   commodore.indices.end());
+    std::cout << "commodore vertices.size(): " << vertices.size() << std::endl;
+    commodore.setTextureId(
+        vulkanSetup.createTexture(commodore.getTexturePath(), &commandPool));
+
+    skull.setVertexOffset(vertices.size());
+    skull.setIndexOffset(indices.size());
+    vertices.insert(vertices.end(), skull.vertices.begin(),
+                    skull.vertices.end());
+    indices.insert(indices.end(), skull.indices.begin(), skull.indices.end());
+    std::cout << "skull vertices.size(): " << vertices.size() << std::endl;
+    skull.setTextureId(
+        vulkanSetup.createTexture(skull.getTexturePath(), &commandPool));
 }
 
 void Render::initVulkan() {
@@ -61,6 +145,7 @@ void Render::initVulkan() {
 
     std::vector<Vertex> modelVertices;
     std::vector<uint32_t> modelIndices;
+
     createScene(modelVertices, modelIndices);
 
     vulkanSetup.createVertexBuffer(&commandPool, modelVertices);

@@ -49,7 +49,7 @@ void Application::mainLoop() {
     // floorBody->setMass(rp3d::decimal(0.0));
     floorBody->setType(rp3d::BodyType::STATIC);
 
-    const rp3d::Vector3 floorHalfExtents(25, 0.10, 25);
+    const rp3d::Vector3 floorHalfExtents(50, 0.10, 50);
     // rp3d::BoxShape* floorShape =
     // render.physicsCommon.createBoxShape(rp3d::Vector3(25.0, 1.50, 25.0));
     rp3d::BoxShape* floorShape =
@@ -68,7 +68,6 @@ void Application::mainLoop() {
     bodies.push_back(floorBody);
     // Add the rigid body and the corresponding model to the map
     bodyMap[floorBody] = render.objects[0];
-    // rotationDeltaMap[floorBody] = glm::vec3(0.0f, 0.0f, 0.0f);
 
     // int i = 4;
     for (int i = 1; i < render.objects.size(); i++) {
@@ -79,7 +78,15 @@ void Application::mainLoop() {
         rp3d::Quaternion orientation = rp3d::Quaternion::identity();
         rp3d::Transform transform(position, orientation);
         rp3d::RigidBody* body = render.world->createRigidBody(transform);
-        rp3d::Vector3 halfExtents(0.5, 0.5, 0.5);
+
+        glm::mat4 modelMatrix = render.objects[i]->getModelMatrix();
+
+        // get current object scale from the current model matrix
+        glm::vec3 scale =
+            glm::vec3(glm::length(modelMatrix[0]), glm::length(modelMatrix[1]),
+                      glm::length(modelMatrix[2]));
+
+        rp3d::Vector3 halfExtents(scale.x, scale.y, scale.z);
         rp3d::BoxShape* boxShape =
             render.physicsCommon.createBoxShape(halfExtents);
         rp3d::Collider* boxCollider =
@@ -91,7 +98,6 @@ void Application::mainLoop() {
 
         // Add the rigid body and the corresponding model to the map
         bodyMap[body] = render.objects[i];
-        // rotationDeltaMap[body] = glm::vec3(0.0f, 0.0f, 0.0f);
     }
 
     // Constant physics time step
@@ -135,69 +141,19 @@ void Application::mainLoop() {
                 // Convert the glm::quat to a rotation matrix
                 const glm::mat4 rotationMatrix = glm::mat4_cast(glm_quat);
 
+                // get current object scale from the current model matrix
+                glm::vec3 scale = glm::vec3(glm::length(currentModelMatrix[0]),
+                                            glm::length(currentModelMatrix[1]),
+                                            glm::length(currentModelMatrix[2]));
+
                 // Replace the rotation part of the model matrix with the new
-                // rotation matrix
-                currentModelMatrix =
+                // rotation matrix and re-apply the scale
+                currentModelMatrix = glm::scale(
                     glm::mat4(rotationMatrix[0], rotationMatrix[1],
-                              rotationMatrix[2], currentModelMatrix[3]);
-
-                // // Multiply the current model matrix with the rotation matrix
-                // currentModelMatrix = currentModelMatrix * rotationMatrix;
-
-                // // std::cout << "Quaternion: (" << r.x << ", " << r.y << ", "
-                // << r.z << ", " << r.w << ")" << std::endl;
-
-                // const glm::quat glm_quat(r.w, r.x, r.y, r.z);
-                // const glm::vec3 euler = glm::eulerAngles(glm_quat);
-
-                // // Update rotation
-                // // currentModelMatrix[0] = glm::vec4(
-                // //     glm::rotate(glm::mat4(1.0f), euler.x, glm::vec3(1.0f,
-                // 0.0f, 0.0f))[0]);
-                // // currentModelMatrix[1] = glm::vec4(
-                // //     glm::rotate(glm::mat4(1.0f), euler.y,
-                // glm::vec3(0.0f, 1.0f, 0.0f))[1]);
-                // // currentModelMatrix[2] = glm::vec4(
-                // //     glm::rotate(glm::mat4(1.0f), euler.z, glm::vec3(0.0f,
-                // 0.0f, 1.0f))[2]);
-
-                // // currentModelMatrix =
-                // //     glm::rotate(currentModelMatrix,
-                // // return_trasform.set_rotation(Core::SVector3(euler.x,
-                // euler.y, euler.z));
-                // // bodyMap[body]->setModelMatrix(currentModelMatrix);
-
-                // glm::vec3 rotationDelta = rotationDeltaMap[body] -
-                // glm::vec3(euler.x, euler.y, euler.z);
-
-                // std::cout << "Rotation Delta: (" << rotationDelta.x << ", "
-                // << rotationDelta.y << ", " << rotationDelta.z << ")" <<
-                // std::endl;
-
-                // glm::quat quaternion(r.w, rotationDelta.x, rotationDelta.y,
-                // rotationDelta.z); glm::vec3 axis = glm::axis(quaternion);
-                // float angle = glm::angle(quaternion);
-
-                // // Convert the angle from radians to degrees
-                // // angle = glm::degrees(angle);
-
-                // // Update rotation
-                // currentModelMatrix =
-                //     glm::rotate(currentModelMatrix, angle, axis);
-
-                // Set the updated model matrix
-
-                if (bodyMap[body]->getModelId() == 0) {
-                    currentModelMatrix = glm::scale(
-                        currentModelMatrix, glm::vec3(50.0f, 0.1f, 50.0f));
-                } else {
-                    currentModelMatrix = glm::scale(
-                        currentModelMatrix, glm::vec3(0.5f, 0.5f, 0.5f));
-                }
+                              rotationMatrix[2], currentModelMatrix[3]),
+                    scale);
 
                 bodyMap[body]->setModelMatrix(currentModelMatrix);
-
-                // rotationDeltaMap[body] = glm::vec3(r.x, r.y, r.z);
             }
 
             // for(int i = 1; i < render.objects.size(); i++) {
