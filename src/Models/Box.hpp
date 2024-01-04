@@ -6,17 +6,16 @@
 #include "Model.hpp"
 
 class Box : public Model {
-  private:
-    /// Total number of boxes created
-    static int totalNbBoxes;
+  protected:
     static int textureId;
-    std::string MODEL_PATH;
-    std::string TEXTURE_PATH;
+
+  private:
+    static int totalNbBoxes;
     static int vertexOffset;
     static int indexOffset;
+    static int indicesCount;
 
   public:
-    static bool loadedModel;
     Box(glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f),
         bool matrixOffset = false,
         glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f),
@@ -25,21 +24,16 @@ class Box : public Model {
         rp3d::PhysicsWorld* world = nullptr,
         rp3d::PhysicsCommon* physicsCommon = nullptr);
 
-    void loadModel();
-
-    std::string getTexturePath() { return TEXTURE_PATH; }
-
     int getModelCount() { return totalNbBoxes; }
-    int getTextureId() {
-        // std::cout << "box getTextureId: " << textureId << std::endl;
-        return textureId;
-    }
-    void setTextureId(int id) {
-        // std::cout << "box setTextureId: " << id << std::endl;
-        textureId = id;
-    }
+    int getTextureId() { return textureId; }
+    void setTextureId(int id) { textureId = id; }
     int getVertexOffset() { return vertexOffset; }
-    void setVertexOffset(int offset) { vertexOffset = offset; }
+    void setVertexOffset(int offset) {
+        std::cout << "box setVertexOffset: " << offset << std::endl;
+        vertexOffset = offset;
+    }
     int getIndexOffset() { return indexOffset; }
     void setIndexOffset(int offset) { indexOffset = offset; }
+    int getIndicesCount() { return indicesCount; }
+    void setIndicesCount(int count) { indicesCount = count; }
 };

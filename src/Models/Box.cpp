@@ -4,10 +4,10 @@
 #include "Model.hpp"
 
 int Box::totalNbBoxes = 0;
-bool Box::loadedModel = false;
 int Box::textureId = 0;
 int Box::vertexOffset = 0;
 int Box::indexOffset = 0;
+int Box::indicesCount = 0;
 
 Box::Box(glm::vec3 scale, bool matrixOffset, glm::vec3 position,
          bool createRigidBody, rp3d::BodyType bodyType,
@@ -18,13 +18,4 @@ Box::Box(glm::vec3 scale, bool matrixOffset, glm::vec3 position,
     TEXTURE_PATH = "textures/cube_orientation.png";
 
     totalNbBoxes++;
-}
-
-void Box::loadModel() {
-    if (loadedModel) {
-        return;
-    }
-    loadedModel = true;
-
-    Model::loadModel(MODEL_PATH);
 }

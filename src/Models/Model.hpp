@@ -28,6 +28,9 @@ class Model {
           rp3d::PhysicsWorld* world = nullptr,
           rp3d::PhysicsCommon* physicsCommon = nullptr);
 
+    std::string MODEL_PATH;
+    std::string TEXTURE_PATH;
+
     glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
 
     std::vector<Vertex> vertices;
@@ -36,7 +39,8 @@ class Model {
 
     rp3d::RigidBody* physicsBody = nullptr;
 
-    void loadModel(std::string MODEL_PATH);
+    void loadModelPath(std::vector<Vertex>* modelVertices,
+                       std::vector<uint32_t>* modelIndices);
 
     int getModelId() { return modelId; }
 
@@ -53,7 +57,8 @@ class Model {
         this->position = glm::vec3(model[3][0], model[3][1], model[3][2]);
     }
 
-    virtual std::string getTexturePath() { return ""; }
+    std::string getTexturePath() { return TEXTURE_PATH; }
+
     virtual int getModelCount() { return 0; }
     virtual int getTextureId() { return -1; }
     virtual void setTextureId(int id) {}
@@ -63,4 +68,7 @@ class Model {
 
     virtual int getIndexOffset() { return -1; }
     virtual void setIndexOffset(int offset) {}
+
+    virtual int getIndicesCount() { return -1; }
+    virtual void setIndicesCount(int count) {}
 };

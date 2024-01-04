@@ -9,12 +9,12 @@ LDFLAGS = -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi -lreactph
 
 ODIR = build/objs
 _OBJS = \
-	Models/Commodore.o \
-	Models/House.o \
-	Models/Hatchet.o \
-	Models/Skull.o \
-	Models/Bridge.o \
 	Models/Box.o \
+ 	Models/Bridge.o \
+ 	Models/Commodore.o \
+ 	Models/Hatchet.o \
+ 	Models/House.o \
+ 	Models/Skull.o \
 	Models/Model.o \
 	Shader.o Render.o Vertex.o Window.o VulkanSetup.o Application.o main.o
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))

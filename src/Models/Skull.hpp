@@ -7,15 +7,13 @@
 
 class Skull : public Model {
   protected:
-    static bool loadedModel;
     static int textureId;
-    std::string MODEL_PATH;
-    std::string TEXTURE_PATH;
 
   private:
     static int totalNbSkulls;
     static int vertexOffset;
     static int indexOffset;
+    static int indicesCount;
 
   public:
     Skull(glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f),
@@ -26,21 +24,13 @@ class Skull : public Model {
           rp3d::PhysicsWorld* world = nullptr,
           rp3d::PhysicsCommon* physicsCommon = nullptr);
 
-    void loadModel();
-
-    std::string getTexturePath() { return TEXTURE_PATH; }
-
     int getModelCount() { return totalNbSkulls; }
-    int getTextureId() {
-        // std::cout << "bridge getTextureId: " << textureId << std::endl;
-        return textureId;
-    }
-    void setTextureId(int id) {
-        // std::cout << "bridge setTextureId: " << id << std::endl;
-        textureId = id;
-    }
+    int getTextureId() { return textureId; }
+    void setTextureId(int id) { textureId = id; }
     int getVertexOffset() { return vertexOffset; }
     void setVertexOffset(int offset) { vertexOffset = offset; }
     int getIndexOffset() { return indexOffset; }
     void setIndexOffset(int offset) { indexOffset = offset; }
+    int getIndicesCount() { return indicesCount; }
+    void setIndicesCount(int count) { indicesCount = count; }
 };

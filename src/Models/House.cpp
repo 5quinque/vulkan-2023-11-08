@@ -2,10 +2,10 @@
 #include "Model.hpp"
 
 int House::totalNbHouses = 0;
-bool House::loadedModel = false;
 int House::textureId = 0;
 int House::vertexOffset = 0;
 int House::indexOffset = 0;
+int House::indicesCount = 0;
 
 House::House(glm::vec3 scale, bool matrixOffset, glm::vec3 position,
              bool createRigidBody, rp3d::BodyType bodyType,
@@ -16,13 +16,4 @@ House::House(glm::vec3 scale, bool matrixOffset, glm::vec3 position,
     TEXTURE_PATH = "textures/house.png";
 
     totalNbHouses++;
-}
-
-void House::loadModel() {
-    if (loadedModel) {
-        return;
-    }
-    loadedModel = true;
-
-    Model::loadModel(MODEL_PATH);
 }

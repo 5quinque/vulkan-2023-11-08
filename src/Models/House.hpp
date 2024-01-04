@@ -7,15 +7,13 @@
 
 class House : public Model {
   protected:
-    static bool loadedModel;
     static int textureId;
-    std::string MODEL_PATH;
-    std::string TEXTURE_PATH;
 
   private:
     static int totalNbHouses;
     static int vertexOffset;
     static int indexOffset;
+    static int indicesCount;
 
   public:
     House(glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f),
@@ -25,10 +23,6 @@ class House : public Model {
           rp3d::BodyType bodyType = rp3d::BodyType::DYNAMIC,
           rp3d::PhysicsWorld* world = nullptr,
           rp3d::PhysicsCommon* physicsCommon = nullptr);
-
-    void loadModel();
-
-    std::string getTexturePath() { return TEXTURE_PATH; }
 
     int getModelCount() { return totalNbHouses; }
     int getTextureId() {
@@ -43,4 +37,6 @@ class House : public Model {
     void setVertexOffset(int offset) { vertexOffset = offset; }
     int getIndexOffset() { return indexOffset; }
     void setIndexOffset(int offset) { indexOffset = offset; }
+    int getIndicesCount() { return indicesCount; }
+    void setIndicesCount(int count) { indicesCount = count; }
 };

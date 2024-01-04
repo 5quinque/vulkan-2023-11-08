@@ -1,7 +1,8 @@
 #pragma once
 
-#include <memory> // std::shared_ptr
-#include <vector> // std::vector
+#include <memory>        // std::shared_ptr
+#include <unordered_set> // std::unordered_set
+#include <vector>        // std::vector
 
 #include <reactphysics3d/reactphysics3d.h>
 #include <vulkan/vulkan.h>
@@ -20,10 +21,15 @@ class Render {
     Shader shader;
     VkCommandPool commandPool;
 
+    std::vector<Vertex> modelVertices;
+    std::vector<uint32_t> modelIndices;
+
     std::vector<std::shared_ptr<Model>> objects;
 
     rp3d::PhysicsCommon physicsCommon;
     rp3d::PhysicsWorld* world = physicsCommon.createPhysicsWorld();
+
+    std::unordered_set<std::string> loadedModelClasses;
 
     Render(Window& window)
         : window(window), vulkanSetup(window, &renderPass),
@@ -35,11 +41,14 @@ class Render {
     void createSyncObjects();
     void createCommandBuffers();
 
+    template <typename T>
+    void addModel(glm::vec3 position,
+                  glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f),
+                  rp3d::BodyType bodyType = rp3d::BodyType::DYNAMIC);
     void drawFrame(FPSCamera::Matrices& matrices);
     void updateUniformBuffer(uint32_t currentImage,
                              FPSCamera::Matrices& matrices);
-    void createScene(std::vector<Vertex>& vertices,
-                     std::vector<uint32_t>& indices);
+    void createScene();
     void cleanup();
 
   private:

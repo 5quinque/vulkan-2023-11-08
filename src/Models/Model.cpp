@@ -65,7 +65,8 @@ Model::Model(int modelId, glm::vec3 scale, bool matrixOffset,
     }
 }
 
-void Model::loadModel(std::string MODEL_PATH) {
+void Model::loadModelPath(std::vector<Vertex>* modelVertices,
+                          std::vector<uint32_t>* modelIndices) {
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
@@ -100,4 +101,11 @@ void Model::loadModel(std::string MODEL_PATH) {
             indices.push_back(uniqueVertices[vertex]);
         }
     }
+
+    setVertexOffset(modelVertices->size());
+    setIndexOffset(modelIndices->size());
+    setIndicesCount(indices.size());
+    modelVertices->insert(modelVertices->end(), vertices.begin(),
+                          vertices.end());
+    modelIndices->insert(modelIndices->end(), indices.begin(), indices.end());
 }

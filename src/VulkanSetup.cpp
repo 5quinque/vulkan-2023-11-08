@@ -460,14 +460,14 @@ void VulkanSetup::pickPhysicalDevice() {
     for (const auto& device : devices) {
         int score = rateDeviceSuitability(device);
         candidates.insert(std::make_pair(score, device));
-
-        std::cout << "device: " << device << " score: " << score << std::endl;
+        // std::cout << "device: " << device << " score: " << score <<
+        // std::endl;
     }
 
     // Check if the best candidate is suitable at all
     if (candidates.rbegin()->first > 0) {
         physicalDevice = candidates.rbegin()->second;
-        std::cout << "best GPU candidate: " << physicalDevice << std::endl;
+        // std::cout << "best GPU candidate: " << physicalDevice << std::endl;
     } else {
         throw std::runtime_error("failed to find a suitable GPU!");
     }
@@ -480,11 +480,11 @@ int VulkanSetup::rateDeviceSuitability(VkPhysicalDevice device) {
     vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
 
     // Print out device information
-    std::cout << "Device Name: " << deviceProperties.deviceName << std::endl;
-    std::cout << "Driver Version: " << deviceProperties.driverVersion
-              << std::endl;
-    std::cout << "Vendor ID: " << deviceProperties.vendorID << std::endl;
-    std::cout << "Device ID: " << deviceProperties.deviceID << std::endl;
+    // std::cout << "Device Name: " << deviceProperties.deviceName << std::endl;
+    // std::cout << "Driver Version: " << deviceProperties.driverVersion
+    //           << std::endl;
+    // std::cout << "Vendor ID: " << deviceProperties.vendorID << std::endl;
+    // std::cout << "Device ID: " << deviceProperties.deviceID << std::endl;
 
     int score = 0;
 
@@ -914,9 +914,10 @@ void VulkanSetup::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
 
     // what's the difference between `bufferInfo.size` and
     // `memRequirements.size`?
-    std::cout << "createBuffer: " << std::endl;
-    std::cout << "bufferInfo.size: " << bufferInfo.size << std::endl;
-    std::cout << "memRequirements.size: " << memRequirements.size << std::endl;
+    // std::cout << "createBuffer: " << std::endl;
+    // std::cout << "bufferInfo.size: " << bufferInfo.size << std::endl;
+    // std::cout << "memRequirements.size: " << memRequirements.size <<
+    // std::endl;
 
     VkMemoryAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
@@ -1073,7 +1074,7 @@ void VulkanSetup::createDescriptorSets(
     // 110 ds:6 ti:2
     // 111 ds:7 ti:3
     for (size_t i = 0; i < numDescriptorSets; i++) {
-        std::cout << "creating descriptor set: " << i << std::endl;
+        // std::cout << "creating descriptor set: " << i << std::endl;
 
         int textureId = i % textures.size();
 
@@ -1084,8 +1085,8 @@ void VulkanSetup::createDescriptorSets(
 
         VkDescriptorImageInfo imageInfo{};
 
-        std::cout << "creating descriptor set for textureId: " << textureId
-                  << std::endl;
+        // std::cout << "creating descriptor set for textureId: " << textureId
+        //           << std::endl;
 
         imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         imageInfo.imageView = textures[textureId].image.view;

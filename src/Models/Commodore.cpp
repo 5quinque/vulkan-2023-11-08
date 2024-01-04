@@ -2,10 +2,10 @@
 #include "Model.hpp"
 
 int Commodore::totalNbCommodores = 0;
-bool Commodore::loadedModel = false;
 int Commodore::textureId = 0;
 int Commodore::vertexOffset = 0;
 int Commodore::indexOffset = 0;
+int Commodore::indicesCount = 0;
 
 Commodore::Commodore(glm::vec3 scale, bool matrixOffset, glm::vec3 position,
                      bool createRigidBody, rp3d::BodyType bodyType,
@@ -17,13 +17,4 @@ Commodore::Commodore(glm::vec3 scale, bool matrixOffset, glm::vec3 position,
     TEXTURE_PATH = "textures/c_pet_tex.png";
 
     totalNbCommodores++;
-}
-
-void Commodore::loadModel() {
-    if (loadedModel) {
-        return;
-    }
-    loadedModel = true;
-
-    Model::loadModel(MODEL_PATH);
 }

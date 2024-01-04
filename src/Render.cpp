@@ -17,118 +17,70 @@
 #include "Models/Skull.hpp"
 #include "Render.hpp"
 
-void Render::createScene(std::vector<Vertex>& vertices,
-                         std::vector<uint32_t>& indices) {
-    Bridge bridge(glm::vec3(1.0f, 1.0f, 1.0f), true,
-                  glm::vec3(-5.0f, 0.0f, 0.0f), true, rp3d::BodyType::STATIC,
-                  world, &physicsCommon);
-    Hatchet hatchet(glm::vec3(0.02f, 0.02f, 0.02f), true,
-                    glm::vec3(-2.0f, 0.0f, 0.0f), true, rp3d::BodyType::DYNAMIC,
-                    world, &physicsCommon);
-    Commodore commodore(glm::vec3(1.0f, 1.0f, 1.0f), true,
-                        glm::vec3(-3.0f, 0.0f, 0.0f), true,
-                        rp3d::BodyType::DYNAMIC, world, &physicsCommon);
-    Skull skull(glm::vec3(1.0f, 1.0f, 1.0f), true,
-                glm::vec3(3.2f, 0.85f, -2.5f), true, rp3d::BodyType::DYNAMIC,
-                world, &physicsCommon);
-    House house(glm::vec3(3.0f, 2.0f, 3.0f), true,
-                glm::vec3(-2.0f, 0.0f, -15.0f), true, rp3d::BodyType::STATIC,
-                world, &physicsCommon);
-    Box floor(glm::vec3(50.0f, 0.1f, 50.0f), true, glm::vec3(0.0f, -1.0f, 0.0f),
-              true, rp3d::BodyType::STATIC, world, &physicsCommon);
+void Render::createScene() {
+    addModel<Bridge>(glm::vec3(-5.0f, 0.0f, 0.0f), glm::vec3(1, 1, 1),
+                     rp3d::BodyType::STATIC);
+    addModel<Hatchet>(glm::vec3(-2.0f, 0.0f, 0.0f),
+                      glm::vec3(0.02f, 0.02f, 0.02f));
+    addModel<Commodore>(glm::vec3(-3.0f, 0.0f, 0.0f));
 
-    floor.loadModel();
-    objects.push_back(std::make_shared<Box>(floor));
+    // floor
+    addModel<Box>(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(50.0f, 0.1f, 50.0f),
+                  rp3d::BodyType::STATIC);
 
-    floor.setVertexOffset(vertices.size());
-    floor.setIndexOffset(indices.size());
-    vertices.insert(vertices.end(), floor.vertices.begin(),
-                    floor.vertices.end());
-    indices.insert(indices.end(), floor.indices.begin(), floor.indices.end());
-    std::cout << "floor vertices.size(): " << vertices.size() << std::endl;
-    // load textures in the model class?
-    floor.setTextureId(
-        vulkanSetup.createTexture(floor.getTexturePath(), &commandPool));
+    // big box
+    addModel<Box>(glm::vec3(0.0f, 0.0f, -4.0f), glm::vec3(1.0f, 1.0f, 1.0f),
+                  rp3d::BodyType::DYNAMIC);
 
-    Box bigBox(glm::vec3(1.0f, 1.0f, 1.0f), true, glm::vec3(0.0f, 0.0f, -4.0f),
-               true, rp3d::BodyType::DYNAMIC, world, &physicsCommon);
-    objects.push_back(std::make_shared<Box>(bigBox));
+    addModel<House>(glm::vec3(-2.0f, 0.0f, -15.0f),
+                    glm::vec3(3.0f, 2.0f, 3.0f));
+    addModel<Skull>(glm::vec3(8.2f, 0.85f, -2.5f));
+
+    addModel<Box>(glm::vec3(3.0f, 0.0f, -4.0f), glm::vec3(1.0f, 1.0f, 1.0f),
+                  rp3d::BodyType::DYNAMIC);
+
+    std::cout << "Number of models: " << objects.size() << std::endl;
+
+    addModel<Box>(glm::vec3(1, 2, 5), glm::vec3(0.4f, 0.4f, 0.4f),
+                  rp3d::BodyType::DYNAMIC);
 
     // create 64 models and add them to the vector
-    for (int i = 0; i < 64; i++) {
-        float x = static_cast<float>((i >> 4) & 3) - 2; // move it left 5 units
-        float y = static_cast<float>((i >> 2) & 3) + 4;
-        float z = static_cast<float>(i & 3) - 5; // move it back 5 units
-        Box box(glm::vec3(0.2f, 0.2f, 0.2f), true, glm::vec3(x, y, z), true,
-                rp3d::BodyType::DYNAMIC, world, &physicsCommon);
-        objects.push_back(std::make_shared<Box>(box));
+    for (int x = 0; x < 3; x++) {
+        for (int y = 0; y < 3; y++) {
+            for (int z = 0; z < 3; z++) {
+                addModel<Box>(glm::vec3(x - 1, y + 2, z - 5),
+                              glm::vec3(0.4f, 0.4f, 0.4f));
+            }
+        }
     }
-
-    bridge.loadModel();
-    objects.push_back(std::make_shared<Bridge>(bridge));
-
-    hatchet.loadModel();
-    objects.push_back(std::make_shared<Hatchet>(hatchet));
-
-    commodore.loadModel();
-    objects.push_back(std::make_shared<Commodore>(commodore));
-
-    skull.loadModel();
-    objects.push_back(std::make_shared<Skull>(skull));
-
-    house.loadModel();
-    objects.push_back(std::make_shared<House>(house));
-
-    bridge.setVertexOffset(vertices.size());
-    bridge.setIndexOffset(indices.size());
-    vertices.insert(vertices.end(), bridge.vertices.begin(),
-                    bridge.vertices.end());
-    indices.insert(indices.end(), bridge.indices.begin(), bridge.indices.end());
-    bridge.setTextureId(
-        vulkanSetup.createTexture(bridge.getTexturePath(), &commandPool));
-
-    hatchet.setVertexOffset(vertices.size());
-    hatchet.setIndexOffset(indices.size());
-    vertices.insert(vertices.end(), hatchet.vertices.begin(),
-                    hatchet.vertices.end());
-    indices.insert(indices.end(), hatchet.indices.begin(),
-                   hatchet.indices.end());
-    std::cout << "hatchet vertices.size(): " << vertices.size() << std::endl;
-    hatchet.setTextureId(
-        vulkanSetup.createTexture(hatchet.getTexturePath(), &commandPool));
-
-    commodore.setVertexOffset(vertices.size());
-    commodore.setIndexOffset(indices.size());
-    vertices.insert(vertices.end(), commodore.vertices.begin(),
-                    commodore.vertices.end());
-    indices.insert(indices.end(), commodore.indices.begin(),
-                   commodore.indices.end());
-    std::cout << "commodore vertices.size(): " << vertices.size() << std::endl;
-    commodore.setTextureId(
-        vulkanSetup.createTexture(commodore.getTexturePath(), &commandPool));
-
-    skull.setVertexOffset(vertices.size());
-    skull.setIndexOffset(indices.size());
-    vertices.insert(vertices.end(), skull.vertices.begin(),
-                    skull.vertices.end());
-    indices.insert(indices.end(), skull.indices.begin(), skull.indices.end());
-    std::cout << "skull vertices.size(): " << vertices.size() << std::endl;
-    skull.setTextureId(
-        vulkanSetup.createTexture(skull.getTexturePath(), &commandPool));
-
-    house.setVertexOffset(vertices.size());
-    house.setIndexOffset(indices.size());
-    vertices.insert(vertices.end(), house.vertices.begin(),
-                    house.vertices.end());
-    indices.insert(indices.end(), house.indices.begin(), house.indices.end());
-    std::cout << "house vertices.size(): " << vertices.size() << std::endl;
-    house.setTextureId(
-        vulkanSetup.createTexture(house.getTexturePath(), &commandPool));
 }
 
-// void Render::loadModel() {
+template <typename T>
+void Render::addModel(glm::vec3 position, glm::vec3 scale,
+                      rp3d::BodyType bodyType) {
+    // std::cout << "Creating model of type: " << typeid(T).name() << std::endl;
+    T* model =
+        new T(scale, true, position, true, bodyType, world, &physicsCommon);
 
-// }
+    // Get the name of the model class
+    std::string modelClassName = typeid(*model).name();
+
+    // Check if the model class has been loaded before
+    if (loadedModelClasses.find(modelClassName) == loadedModelClasses.end()) {
+        model->loadModelPath(&modelVertices, &modelIndices);
+        model->setTextureId(
+            vulkanSetup.createTexture(model->getTexturePath(), &commandPool));
+
+        // Add the model class to the set of loaded model classes
+        loadedModelClasses.insert(modelClassName);
+    } else {
+        std::cout << "Model already loaded" << std::endl;
+    }
+
+    std::cout << "model->getModelId(): " << model->getModelId() << std::endl;
+
+    objects.push_back(std::shared_ptr<T>(model));
+}
 
 void Render::initVulkan() {
     std::cout << "Render::initVulkan()" << std::endl;
@@ -147,10 +99,7 @@ void Render::initVulkan() {
     vulkanSetup.createDepthResources(&commandPool);
     vulkanSetup.createFramebuffers();
 
-    std::vector<Vertex> modelVertices;
-    std::vector<uint32_t> modelIndices;
-
-    createScene(modelVertices, modelIndices);
+    createScene();
 
     vulkanSetup.createVertexBuffer(&commandPool, modelVertices);
     vulkanSetup.createIndexBuffer(&commandPool, modelIndices,
@@ -374,11 +323,9 @@ void Render::recordCommandBuffer(VkCommandBuffer commandBuffer,
                            VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4),
                            &modelMatrix);
 
-        if (object->indices.size() > 0) {
-            indexCount = static_cast<uint32_t>(object->indices.size());
-        }
-        vkCmdDrawIndexed(commandBuffer, indexCount, 1, object->getIndexOffset(),
-                         object->getVertexOffset(), 0);
+        vkCmdDrawIndexed(commandBuffer, object->getIndicesCount(), 1,
+                         object->getIndexOffset(), object->getVertexOffset(),
+                         0);
     }
 
     vkCmdEndRenderPass(commandBuffer);
