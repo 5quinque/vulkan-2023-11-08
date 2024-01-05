@@ -55,7 +55,7 @@ Model::Model(int modelId, glm::vec3 scale, bool matrixOffset,
         physicsBody->setType(bodyType);
 
         // [TODO] Set the mass
-        // physicsBody->setMass(rp3d::decimal(0.0));
+        // physicsBody->setMass(rp3d::decimal(0.01));
 
         rp3d::Vector3 halfExtents(scale.x, scale.y, scale.z);
         rp3d::BoxShape* boxShape = physicsCommon->createBoxShape(halfExtents);

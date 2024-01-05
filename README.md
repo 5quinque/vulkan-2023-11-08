@@ -103,6 +103,8 @@ Application
 
   `[ ]` cmake
 
+  `[ ]` create a `modelManager` class to remove the bs static members
+
 
 # vulkan shader
 

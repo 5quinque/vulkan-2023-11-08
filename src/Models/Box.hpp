@@ -28,10 +28,7 @@ class Box : public Model {
     int getTextureId() { return textureId; }
     void setTextureId(int id) { textureId = id; }
     int getVertexOffset() { return vertexOffset; }
-    void setVertexOffset(int offset) {
-        std::cout << "box setVertexOffset: " << offset << std::endl;
-        vertexOffset = offset;
-    }
+    void setVertexOffset(int offset) { vertexOffset = offset; }
     int getIndexOffset() { return indexOffset; }
     void setIndexOffset(int offset) { indexOffset = offset; }
     int getIndicesCount() { return indicesCount; }

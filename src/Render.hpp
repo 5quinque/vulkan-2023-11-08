@@ -27,7 +27,7 @@ class Render {
     std::vector<std::shared_ptr<Model>> objects;
 
     rp3d::PhysicsCommon physicsCommon;
-    rp3d::PhysicsWorld* world = physicsCommon.createPhysicsWorld();
+    rp3d::PhysicsWorld* world;
 
     std::unordered_set<std::string> loadedModelClasses;
 
@@ -48,6 +48,7 @@ class Render {
     void drawFrame(FPSCamera::Matrices& matrices);
     void updateUniformBuffer(uint32_t currentImage,
                              FPSCamera::Matrices& matrices);
+    void createPhysicsWorld();
     void createScene();
     void cleanup();
 

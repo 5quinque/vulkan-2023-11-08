@@ -18,41 +18,32 @@
 #include "Render.hpp"
 
 void Render::createScene() {
-    addModel<Bridge>(glm::vec3(-5.0f, 0.0f, 0.0f), glm::vec3(1, 1, 1),
+    // floor
+    addModel<Box>(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(50.0f, 0.1f, 50.0f),
+                  rp3d::BodyType::STATIC);
+    addModel<Bridge>(glm::vec3(-5.0f, -0.40f, 0.0f), glm::vec3(1, 1, 1),
                      rp3d::BodyType::STATIC);
     addModel<Hatchet>(glm::vec3(-2.0f, 0.0f, 0.0f),
                       glm::vec3(0.02f, 0.02f, 0.02f));
     addModel<Commodore>(glm::vec3(-3.0f, 0.0f, 0.0f));
-
-    // floor
-    addModel<Box>(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(50.0f, 0.1f, 50.0f),
-                  rp3d::BodyType::STATIC);
-
-    // big box
-    addModel<Box>(glm::vec3(0.0f, 0.0f, -4.0f), glm::vec3(1.0f, 1.0f, 1.0f),
-                  rp3d::BodyType::DYNAMIC);
-
-    addModel<House>(glm::vec3(-2.0f, 0.0f, -15.0f),
-                    glm::vec3(3.0f, 2.0f, 3.0f));
+    addModel<Box>(glm::vec3(0.0f, 0.0f, -4.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    addModel<House>(glm::vec3(-5.0f, -1.0f, -15.0f),
+                    glm::vec3(3.0f, 2.0f, 3.0f), rp3d::BodyType::STATIC);
     addModel<Skull>(glm::vec3(8.2f, 0.85f, -2.5f));
-
-    addModel<Box>(glm::vec3(3.0f, 0.0f, -4.0f), glm::vec3(1.0f, 1.0f, 1.0f),
-                  rp3d::BodyType::DYNAMIC);
-
-    std::cout << "Number of models: " << objects.size() << std::endl;
-
-    addModel<Box>(glm::vec3(1, 2, 5), glm::vec3(0.4f, 0.4f, 0.4f),
-                  rp3d::BodyType::DYNAMIC);
+    addModel<Box>(glm::vec3(3.0f, 0.0f, -4.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    addModel<Box>(glm::vec3(1, 2, 5), glm::vec3(0.4f, 0.4f, 0.4f));
 
     // create 64 models and add them to the vector
     for (int x = 0; x < 3; x++) {
         for (int y = 0; y < 3; y++) {
             for (int z = 0; z < 3; z++) {
                 addModel<Box>(glm::vec3(x - 1, y + 2, z - 5),
-                              glm::vec3(0.4f, 0.4f, 0.4f));
+                              glm::vec3(0.4f, 0.04f, 0.4f));
             }
         }
     }
+
+    std::cout << "Number of models: " << objects.size() << std::endl;
 }
 
 template <typename T>
@@ -73,13 +64,21 @@ void Render::addModel(glm::vec3 position, glm::vec3 scale,
 
         // Add the model class to the set of loaded model classes
         loadedModelClasses.insert(modelClassName);
-    } else {
-        std::cout << "Model already loaded" << std::endl;
     }
 
-    std::cout << "model->getModelId(): " << model->getModelId() << std::endl;
-
     objects.push_back(std::shared_ptr<T>(model));
+}
+
+void Render::createPhysicsWorld() {
+    float earthGravity = 9.80665f;
+    // Create the world settings
+    rp3d::PhysicsWorld::WorldSettings settings;
+    settings.defaultVelocitySolverNbIterations = 20;
+    settings.isSleepingEnabled = false;
+    settings.gravity = rp3d::Vector3(0, -earthGravity, 0);
+
+    // Create the physics world with your settings
+    world = physicsCommon.createPhysicsWorld(settings);
 }
 
 void Render::initVulkan() {
@@ -98,6 +97,8 @@ void Render::initVulkan() {
     createCommandPool();
     vulkanSetup.createDepthResources(&commandPool);
     vulkanSetup.createFramebuffers();
+
+    createPhysicsWorld();
 
     createScene();
 
