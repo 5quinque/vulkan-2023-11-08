@@ -139,4 +139,17 @@ class FPSCamera {
         cameraDirection = dir;
         updateViewMatrix();
     }
+
+    void updateFOV(float inc) {
+        this->fov += inc;
+
+        if (this->fov < 10.0f)
+            this->fov = 10.0f;
+
+        if (this->fov > 145.0f)
+            this->fov = 145.0f;
+
+        // [TODO] save aspect ratio instead of hardcoding
+        setPerspective(fov, (float)1920 / (float)1080, znear, zfar);
+    }
 };

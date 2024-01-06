@@ -42,6 +42,9 @@ class Model {
     void loadModelPath(std::vector<Vertex>* modelVertices,
                        std::vector<uint32_t>* modelIndices);
 
+    void updateVelocity(glm::vec3 velocity);
+    void updateAngularVelocity(glm::vec3 angularVelocity);
+
     int getModelId() { return modelId; }
 
     void setScale(glm::vec3 scale) {

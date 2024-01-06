@@ -15,6 +15,7 @@ void Window::initWindow() {
 
     glfwSetKeyCallback(window, keyCallback);
     glfwSetCursorPosCallback(window, mouseCallback);
+    glfwSetScrollCallback(window, scrollCallback);
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
@@ -63,6 +64,12 @@ void Window::mouseCallback(GLFWwindow* window, double xpos, double ypos) {
     app->camera.mouse.lastY = ypos;
 
     app->camera.updateCameraDirection();
+}
+
+void Window::scrollCallback(GLFWwindow* window, double xoffset,
+                            double yoffset) {
+    auto app = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+    app->camera.updateFOV(yoffset);
 }
 
 void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action,

@@ -65,6 +65,15 @@ Model::Model(int modelId, glm::vec3 scale, bool matrixOffset,
     }
 }
 
+void Model::updateVelocity(glm::vec3 velocity) {
+    physicsBody->setLinearVelocity(
+        rp3d::Vector3(velocity.x, velocity.y, velocity.z));
+}
+void Model::updateAngularVelocity(glm::vec3 angularVelocity) {
+    physicsBody->setAngularVelocity(
+        rp3d::Vector3(angularVelocity.x, angularVelocity.y, angularVelocity.z));
+}
+
 void Model::loadModelPath(std::vector<Vertex>* modelVertices,
                           std::vector<uint32_t>* modelIndices) {
     tinyobj::attrib_t attrib;
