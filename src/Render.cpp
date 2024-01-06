@@ -26,19 +26,23 @@ void Render::createScene() {
     addModel<Hatchet>(glm::vec3(-2.0f, 0.0f, 0.0f),
                       glm::vec3(0.02f, 0.02f, 0.02f));
     addModel<Commodore>(glm::vec3(-3.0f, 0.0f, 0.0f));
-    addModel<Box>(glm::vec3(0.0f, 0.0f, -4.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    addModel<House>(glm::vec3(-5.0f, -1.0f, -15.0f),
-                    glm::vec3(3.0f, 2.0f, 3.0f), rp3d::BodyType::STATIC);
+    // addModel<Box>(glm::vec3(0.0f, 0.0f, -4.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    // addModel<House>(glm::vec3(-5.0f, -1.0f, -15.0f),
+    //                 glm::vec3(3.0f, 2.0f, 3.0f), rp3d::BodyType::STATIC);
     addModel<Skull>(glm::vec3(8.2f, 0.85f, -2.5f));
-    addModel<Box>(glm::vec3(3.0f, 0.0f, -4.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    addModel<Box>(glm::vec3(1, 2, 5), glm::vec3(0.4f, 0.4f, 0.4f));
+    // addModel<Box>(glm::vec3(-1.0f, 0.0f, -4.0f),
+    // glm::vec3(1.0f, 1.0f, 1.0f));
+
+    Box bigBox =
+        addModel<Box>(glm::vec3(0, 0, -5), glm::vec3(2.4f, 2.4f, 0.41f));
+    bigBox.physicsBody->setMass(10000.0f);
 
     // create 64 models and add them to the vector
     for (int x = 0; x < 3; x++) {
         for (int y = 0; y < 3; y++) {
             for (int z = 0; z < 3; z++) {
-                addModel<Box>(glm::vec3(x - 1, y + 2, z - 5),
-                              glm::vec3(0.4f, 0.04f, 0.4f));
+                Box box = addModel<Box>(glm::vec3(x - 1, y + 2, z - 5),
+                                        glm::vec3(0.4f, 0.04f, 0.4f));
             }
         }
     }
@@ -47,8 +51,8 @@ void Render::createScene() {
 }
 
 template <typename T>
-void Render::addModel(glm::vec3 position, glm::vec3 scale,
-                      rp3d::BodyType bodyType) {
+T Render::addModel(glm::vec3 position, glm::vec3 scale,
+                   rp3d::BodyType bodyType) {
     // std::cout << "Creating model of type: " << typeid(T).name() << std::endl;
     T* model =
         new T(scale, true, position, true, bodyType, world, &physicsCommon);
@@ -67,6 +71,8 @@ void Render::addModel(glm::vec3 position, glm::vec3 scale,
     }
 
     objects.push_back(std::shared_ptr<T>(model));
+
+    return *model;
 }
 
 void Render::createPhysicsWorld() {

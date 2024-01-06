@@ -43,9 +43,9 @@ class Render {
     void createCommandBuffers();
 
     template <typename T>
-    void addModel(glm::vec3 position,
-                  glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f),
-                  rp3d::BodyType bodyType = rp3d::BodyType::DYNAMIC);
+    T addModel(glm::vec3 position,
+               glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f),
+               rp3d::BodyType bodyType = rp3d::BodyType::DYNAMIC);
     void drawFrame(FPSCamera::Matrices& matrices);
     void updateUniformBuffer(uint32_t currentImage,
                              FPSCamera::Matrices& matrices);
