@@ -3,12 +3,14 @@
 #include "FPSCamera.hpp"
 #include "Render.hpp"
 #include "Window.hpp"
+// #include "Models/Rover.hpp"
 
 class Application {
   public:
     Window window;
     Render render;
     FPSCamera camera;
+    // Rover character;
 
     struct TickObject {
         float time;

@@ -9,6 +9,7 @@
 
 #include "FPSCamera.hpp"
 #include "Models/Model.hpp"
+#include "Models/Rover.hpp"
 #include "Shader.hpp"
 #include "VulkanSetup.hpp"
 
@@ -51,6 +52,8 @@ class Render {
     void createPhysicsWorld();
     void createScene();
     void cleanup();
+
+    void updateCharacterModelMatrix(glm::mat4 viewMatrix);
 
   private:
     std::vector<VkCommandBuffer> commandBuffers;

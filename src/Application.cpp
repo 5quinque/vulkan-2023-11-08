@@ -20,11 +20,8 @@ void Application::mainLoop() {
     float width = render.vulkanSetup.swapChainExtent.width;
     float height = render.vulkanSetup.swapChainExtent.height;
 
-    // fov, aspect, znear, zfar
-    // znear is 0.1f because I like my near clipping plane to not
-    // poke me in the face
     // [TODO] should this just be a default value set in the camera class?
-    camera.setPerspective(60.0f, (float)width / (float)height, 0.1f, 512.0f);
+    camera.setPerspective(60.0f, (float)width / (float)height, 0.05f, 256.0f);
 
     // set camera movement speed
     // camera.setMovementSpeed(2.5f);
@@ -43,6 +40,9 @@ void Application::mainLoop() {
         window.updateTitle(applicationName);
         glfwPollEvents();
         camera.updateCameraPos(tickObject.timeDelta);
+
+        render.updateCharacterModelMatrix(camera.matrices.view);
+
         render.drawFrame(camera.matrices);
 
         // Add the time difference in the accumulator

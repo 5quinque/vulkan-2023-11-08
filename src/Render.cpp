@@ -116,6 +116,15 @@ void Render::initVulkan() {
     createSyncObjects();
 }
 
+void Render::updateCharacterModelMatrix(glm::mat4 viewMatrix) {
+    // std::cout << "Render::updateCharacterModelMatrix()" << std::endl;
+    glm::mat4 modelMatrix = glm::mat4(1.0f);
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -0.9f, -1.0f));
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(180.0f),
+                              glm::vec3(0.0f, 1.0f, 0.0f));
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.01f, 0.01f, 0.01f));
+}
+
 void Render::drawFrame(FPSCamera::Matrices& matrices) {
     // https://vulkan-tutorial.com/en/Drawing_a_triangle/Drawing/Rendering_and_presentation#page_Outline-of-a-frame
     // At a high level, rendering a frame in Vulkan consists of a common set of
