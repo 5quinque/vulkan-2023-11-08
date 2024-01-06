@@ -14,6 +14,7 @@ _OBJS = \
  	Models/Commodore.o \
  	Models/Hatchet.o \
  	Models/House.o \
+	Models/Rover.o \
  	Models/Skull.o \
 	Models/Model.o \
 	Shader.o Render.o Vertex.o Window.o VulkanSetup.o Application.o main.o
