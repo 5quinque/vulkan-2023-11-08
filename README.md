@@ -18,14 +18,16 @@ LSHIFT
 SPACE
 ```
 
-## compile
+## compile & run
 
 ```bash
 make shaders
 
-make && make test
+cd build
+cmake ..
+make
 
-# make clean_shaders
+./VulkanTest
 ```
 
 [Vulkan SDK](https://vulkan.lunarg.com/)
