@@ -1,8 +1,26 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.16)
 project(VulkanTest)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -DTRACY_ENABLE")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 ")
+
+
+# n.b this will only copy the files when you run the CMake command.
+#     If you add new files to these directories, you will need to rerun
+#     CMake to copy them to the build directory.
+# Copy all shader files
+file(GLOB SHADER_FILES ${CMAKE_SOURCE_DIR}/shaders/*)
+file(COPY ${SHADER_FILES} DESTINATION ${CMAKE_BINARY_DIR}/shaders)
+
+# Copy all model files
+file(GLOB MODEL_FILES ${CMAKE_SOURCE_DIR}/models/*)
+file(COPY ${MODEL_FILES} DESTINATION ${CMAKE_BINARY_DIR}/models)
+
+# Copy all texture files
+file(GLOB TEXTURE_FILES ${CMAKE_SOURCE_DIR}/textures/*)
+file(COPY ${TEXTURE_FILES} DESTINATION ${CMAKE_BINARY_DIR}/textures)
+
+
 
 if(DEBUG)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fno-inline")
@@ -32,11 +50,11 @@ set(SOURCES
   src/main.cpp
 )
 
-add_executable(VulkanTest ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES})
 
-target_link_libraries(VulkanTest
+target_link_libraries(${PROJECT_NAME}
   glfw
-  ${VULKAN_LIBRARY}
+  Vulkan::Vulkan
   ${CMAKE_DL_LIBS}
   ${CMAKE_THREAD_LIBS_INIT}
   ${X11_LIBRARIES}
